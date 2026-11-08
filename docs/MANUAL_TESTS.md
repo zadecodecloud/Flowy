@@ -1,0 +1,3 @@
+# Manual tests
+
+All requested runtime and hardware cases are UNVERIFIED: notch/external display geometry and detach; Spaces/fullscreen; idle click-through and hover controls; Escape/outside click; Music, Spotify and browser controls; AirDrop; tray safety and relaunch; permissions denial/revocation; battery/HUD preemption; offline lyrics; unknown download totals; lock and sleep; screenshot restoration; cleanup. CPU, memory and animation performance have not been measured. No TCC, helper loading or launch-at-login verification has been performed. The unsigned build is not a runtime verification.

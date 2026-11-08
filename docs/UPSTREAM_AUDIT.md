@@ -1,0 +1,13 @@
+# Upstream audit — in progress
+
+Baseline: https://github.com/jackson-storm/DynamicNotch.git at `61657ee7fa7a96633f49d1eda803296030a4f4fa`, branch `notchflow`. This is a shallow checkout. GPL-3.0 LICENSE and existing source notices retained. No upstream installation script was executed.
+
+Architecture: `Application/AppContainer.swift` supplies feature services and view models to `Features/Notch/NotchEventCoordinator.swift`; `Core/NotchEngine` schedules `NotchContentProtocol` content. `Application/Panels` and `Application/Windows` provide panels and layout; `Shared/Extensions/extension+NSScreen.swift` reads auxiliary top areas. Settings catalog is `Features/Settings/Root/Models/SettingsRootSections.swift`.
+
+Critical upstream risks requiring changes before production: FaceID scans landmarks without enrolled identity verification, includes simulated success and injects stored login password; do not run this path. Sparkle has upstream feed/key and starts automatic checks. Screenshot monitoring can change global screenshot settings. Recording uses private API and process control. Overlay canvas is 1000×1000; actual input behavior needs measurement. Window constrainer can resize other apps. Fork changes disable the upstream password/FaceID path and update feed, disable screenshot preference mutation and stop-by-name, and stop launching the window constrainer. These mitigations are incomplete and need runtime verification.
+
+Private/capability dependencies include MediaRemote helper, DisplayServices, SkyLight/CGS, event taps, Accessibility, EventKit and camera. Permissions, helper lifecycle and fallbacks need further audit. LRCLIB is explicitly injected in AppContainer. The animated equalizer is not a measured audio signal.
+
+MediaRemoteAdapter framework and test client contain arm64 and x86_64 slices; framework has standard Current, Resources, Headers and binary symlinks. `MediaRemoteAdapterResources.swift` resolves resources; the build copies the script and helper to Resources and framework to Frameworks; the framework has an ad-hoc source signature. Packaged lookup at runtime, process cleanup and running outside the checkout remain unverified. Perl and binary behavior require further audit. No KAG1O/DynamicBar assets used.
+
+The screenshot monitor still scans a staging cache and has empty suppression/clipboard methods; disabling preference mutations does not implement folder monitoring or safe recovery. Recording monitor still has private notification lifetime and attribution concerns; stop-by-name is disabled, not replaced with verified control. The built application must not be treated as ready.

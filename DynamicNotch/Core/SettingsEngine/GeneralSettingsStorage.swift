@@ -1,0 +1,277 @@
+enum GeneralSettingsStorage {
+    enum Keys {
+        static let launchAtLogin = "isLaunchAtLoginEnabled"
+        static let dockIcon = "isDockIconVisible"
+        static let appearanceMode = "settings.general.appearance.mode"
+
+        static let notchBackgroundStyle = "settings.notch.backgroundStyle"
+        static let notchGlassTransparency = "settings.notch.glassTransparency"
+        static let notchWidth = "notchWidth"
+        static let notchHeight = "notchHeight"
+        static let menuBarIcon = "isMenuBarIconVisible"
+        static let notchStrokeEnabled = "isShowNotchStrokeEnabled"
+        static let notchStrokeWidth = "notchStrokeWidth"
+        static let notchStrokeOpacity = "notchStrokeOpacity"
+        static let displayLocation = "displayLocation"
+        static let preferredDisplayUUID = "settings.general.display.preferred.uuid"
+        static let preferredDisplayName = "settings.general.display.preferred.name"
+        static let displayAutoSwitchEnabled = "settings.general.display.autoSwitchEnabled"
+        static let appLanguage = "settings.general.language.app"
+        static let notchLanguage = "settings.general.language.notch"
+        static let hideNotchInFullscreenEnabled = "settings.general.hideNotchInFullscreen"
+        static let hideDynamicIslandInFullscreenEnabled = "settings.general.hideDynamicIslandInFullscreen"
+        static let notchlessWindowMarginEnabled = "settings.notchless.windowMargin.enabled"
+        static let notchlessWindowMarginOffset = "settings.notchless.windowMargin.offset"
+        static let notchTapToExpandEnabled = "settings.notch.gestures.tapToExpand"
+        static let notchExpandInteraction = "settings.notch.gestures.expandInteraction"
+        static let notchCollapseInteraction = "settings.notch.gestures.collapseInteraction"
+        static let notchPressHoldDuration = "settings.notch.gestures.pressHoldDuration"
+        static let notchMouseDragGesturesEnabled = "settings.notch.gestures.mouseDrag"
+        static let notchTrackpadSwipeGesturesEnabled = "settings.notch.gestures.trackpadSwipe"
+        static let notchSwipeDismissEnabled = "settings.notch.gestures.dismiss"
+        static let notchSwipeRestoreEnabled = "settings.notch.gestures.restore"
+        static let notchHoverHapticEnabled = "settings.notch.gestures.hoverHaptic"
+        static let notchContentPriorityOverrides = NotchContentPriority.overrideStorageKey
+        static let brightnessHUDEnabled = "settings.hud.brightness"
+        static let keyboardHUDEnabled = "settings.hud.keyboard"
+        static let volumeHUDEnabled = "settings.hud.volume"
+        static let volumeFeedbackSoundEnabled = "settings.hud.volumeFeedbackSound"
+        static let brightnessHUDDuration = "settings.hud.brightness.duration"
+        static let keyboardHUDDuration = "settings.hud.keyboard.duration"
+        static let volumeHUDDuration = "settings.hud.volume.duration"
+        static let hudStyle = "settings.hud.style"
+        static let hudIndicatorStyle = "settings.hud.indicatorStyle"
+        static let hudIndicatorTintStyle = "settings.hud.indicatorTintStyle"
+        static let hudIndicatorGlowEnabled = "settings.hud.indicatorGlow"
+        static let hudColoredLevelEnabled = "settings.hud.coloredLevel"
+        static let hudColoredStrokeEnabled = "settings.hud.coloredStroke"
+        static let hotspotLiveActivityEnabled = "settings.live.hotspot"
+        static let vpnLiveActivityEnabled = "settings.live.vpn"
+        static let focusLiveActivityEnabled = "settings.live.focus"
+        static let focusOnAutoHideEnabled = "settings.live.focus.autoHide"
+        static let focusOnTemporaryActivityDuration = "settings.temporary.focusOn.duration"
+        static let focusAppearanceStyle = "settings.focus.appearanceStyle"
+        static let nowPlayingLiveActivityEnabled = "settings.live.nowPlaying"
+        static let closeAtFocusLiveActivityEnabled = "settings.nowPlaying.closeAtFocus"
+        static let nowPlayingFavoriteButtonVisible = "settings.nowPlaying.favoriteButtonVisible"
+        static let nowPlayingOutputDeviceButtonVisible = "settings.nowPlaying.outputDeviceButtonVisible"
+        static let nowPlayingArtwork3DEffectEnabled = "settings.nowPlaying.artwork3DEffectEnabled"
+        static let nowPlayingPauseHideTimerEnabled = "settings.nowPlaying.pauseHideTimerEnabled"
+        static let nowPlayingPauseHideDelay = "settings.nowPlaying.pauseHideDelay"
+        static let nowPlayingSourceFilter = "settings.nowPlaying.sourceFilter"
+        static let downloadsLiveActivityEnabled = "settings.live.downloads"
+        static let downloadsProgressIndicatorStyle = "settings.live.downloads.progressIndicatorStyle"
+        static let dragAndDropLiveActivityEnabled = "settings.live.dragAndDrop"
+        static let airDropLiveActivityEnabled = "settings.live.airDrop"
+        static let dragAndDropActivityMode = "settings.live.dragAndDrop.mode"
+        static let fileTrayUsageMode = "settings.live.tray.usageMode"
+        static let fileTrayRemoveButtonHidden = "settings.live.tray.removeButtonHidden"
+        static let trayLiveActivityEnabled = "settings.live.tray"
+        static let mirrorLiveActivityEnabled = "settings.live.mirror"
+        static let mirrorImageFlipped = "settings.mirror.imageFlipped"
+        static let timerLiveActivityEnabled = "settings.live.timer"
+        static let timerSoundEnabled = "settings.timer.soundEnabled"
+        static let timerSound = "settings.timer.sound"
+        static let screenRecordingLiveActivityEnabled = "settings.live.screenRecording"
+        static let screenRecordingStyle = "settings.screenRecording.style"
+        static let screenshotActivityEnabled = "settings.live.screenshot"
+        static let screenshotDisableSystemThumbnail = "settings.screenshot.disableSystemThumbnail"
+        static let screenshotTemporaryActivityDuration = "settings.temporary.screenshot.duration"
+        static let screenshotAutoHideEnabled = "settings.screenshot.autoHideEnabled"
+        static let screenshotSavePath = "settings.screenshot.savePath"
+        static let screenRecordingSavePath = "settings.screenRecording.savePath"
+        static let legacyFileTransfersLiveActivityEnabled = "settings.live.fileTransfers"
+        static let chargerTemporaryActivityEnabled = "settings.temporary.charger"
+        static let lowPowerTemporaryActivityEnabled = "settings.temporary.lowPower"
+        static let fullPowerTemporaryActivityEnabled = "settings.temporary.fullPower"
+        static let temporaryActivityDurationScale = "settings.temporary.durationScale"
+        static let chargerTemporaryActivityDuration = "settings.temporary.charger.duration"
+        static let lowPowerTemporaryActivityDuration = "settings.temporary.lowPower.duration"
+        static let fullPowerTemporaryActivityDuration = "settings.temporary.fullPower.duration"
+        static let lowPowerNotificationThreshold = "settings.temporary.lowPower.threshold"
+        static let fullPowerNotificationThreshold = "settings.temporary.fullPower.threshold"
+        static let lowPowerNotificationStyle = "settings.temporary.lowPower.style"
+        static let fullPowerNotificationStyle = "settings.temporary.fullPower.style"
+        static let bluetoothTemporaryActivityEnabled = "settings.temporary.bluetooth"
+        static let bluetoothTemporaryActivityDuration = "settings.temporary.bluetooth.duration"
+        static let bluetoothAppearanceStyle = "settings.bluetooth.appearanceStyle"
+        static let bluetoothBatteryStrokeEnabled = "settings.bluetooth.batteryStrokeEnabled"
+        static let bluetoothBatteryIndicatorStyle = "settings.bluetooth.batteryIndicatorStyle"
+        static let vpnTemporaryActivityEnabled = "settings.temporary.vpn"
+        static let vpnTemporaryActivityDuration = "settings.temporary.vpn.duration"
+        static let vpnDisconnectedTemporaryActivityEnabled = "settings.temporary.vpnDisconnected"
+        static let vpnDisconnectedTemporaryActivityDuration = "settings.temporary.vpnDisconnected.duration"
+        static let noInternetTemporaryActivityEnabled = "settings.temporary.noInternet"
+        static let hotspotAppearanceStyle = "settings.network.hotspotAppearanceStyle"
+        static let networkShowVPNDetail = "settings.network.showVPNDetail"
+        static let networkShowVPNTimer = "settings.network.showVPNTimer"
+
+        static let focusOffTemporaryActivityEnabled = "settings.temporary.focusOff"
+        static let focusOffTemporaryActivityDuration = "settings.temporary.focusOff.duration"
+        static let notchSizeTemporaryActivityEnabled = "settings.temporary.notchSize"
+        static let notchSizeTemporaryActivityDuration = "settings.temporary.notchSize.duration"
+        static let lowBatterySound = "settings.battery.lowBatterySound"
+        static let fullBatterySound = "settings.battery.fullBatterySound"
+        static let localTimerShortcutKeyCode = "settings.timer.shortcut.keyCode"
+        static let localTimerShortcutModifiers = "settings.timer.shortcut.modifiers"
+        static let localTimerShortcutKeyDisplay = "settings.timer.shortcut.keyDisplay"
+        static let calendarLiveActivity = "settings.calendar.liveActivity"
+        static let calendarHideWhenFocused = "settings.calendar.hideWhenFocused"
+        static let calendarShowAllDay = "settings.calendar.showAllDay"
+        static let calendarDaysToShow = "settings.calendar.daysToShow"
+        static let calendarNoticeMinutes = "settings.calendar.noticeMinutes"
+        static let calendarIncludedCalendarIDs = "settings.calendar.includedCalendarIDs"
+        static let calendarTimeDisplayFormat = "settings.calendar.timeDisplayFormat"
+        static let calendarOngoingEventHideMinutes = "settings.calendar.ongoingEventHideMinutes"
+        static let calendarPrivacyMode = "settings.calendar.privacy"
+        static let calendarSoundAlert = "settings.calendar.soundAlert"
+        static let calendarShowCreatedEventsOnly = "settings.calendar.showCreatedEventsOnly"
+        static let externalDrivesNotificationsEnabled = "settings.notifications.externalDrives.enabled"
+        static let externalDrivesNotificationDuration = "settings.notifications.externalDrives.duration"
+        static let externalDrivesShowEjected = "settings.notifications.externalDrives.showEjected"
+    }
+
+    static let defaultValues: [String: Any] = [
+        Keys.launchAtLogin: false,
+        Keys.dockIcon: false,
+        Keys.appearanceMode: SettingsAppearanceMode.system.rawValue,
+
+        Keys.notchBackgroundStyle: NotchBackgroundStyle.glass.rawValue,
+        Keys.notchGlassTransparency: 0.78,
+        Keys.notchWidth: 0,
+        Keys.notchHeight: 0,
+        Keys.menuBarIcon: true,
+        Keys.notchStrokeEnabled: true,
+        Keys.notchStrokeWidth: 2.5,
+        Keys.notchStrokeOpacity: 0.6,
+        Keys.displayLocation: NotchDisplayLocation.main.rawValue,
+        Keys.preferredDisplayUUID: "",
+        Keys.preferredDisplayName: "",
+        Keys.displayAutoSwitchEnabled: true,
+        Keys.appLanguage: DynamicNotchLanguage.vietnamese.rawValue,
+        Keys.notchLanguage: DynamicNotchLanguage.vietnamese.rawValue,
+        Keys.hideNotchInFullscreenEnabled: true,
+        Keys.hideDynamicIslandInFullscreenEnabled: true,
+        Keys.notchlessWindowMarginEnabled: false,
+        Keys.notchlessWindowMarginOffset: 17,
+        Keys.notchTapToExpandEnabled: true,
+        Keys.notchExpandInteraction: NotchExpandInteraction.hover.rawValue,
+        Keys.notchCollapseInteraction: NotchCollapseInteraction.hoverLeaves.rawValue,
+        Keys.notchPressHoldDuration: 0.20,
+        Keys.notchMouseDragGesturesEnabled: true,
+        Keys.notchTrackpadSwipeGesturesEnabled: true,
+        Keys.notchSwipeDismissEnabled: true,
+        Keys.notchSwipeRestoreEnabled: true,
+        Keys.notchHoverHapticEnabled: false,
+        Keys.notchContentPriorityOverrides: [:],
+        Keys.brightnessHUDEnabled: false,
+        Keys.keyboardHUDEnabled: false,
+        Keys.volumeHUDEnabled: false,
+        Keys.volumeFeedbackSoundEnabled: true,
+        Keys.brightnessHUDDuration: 2,
+        Keys.keyboardHUDDuration: 2,
+        Keys.volumeHUDDuration: 2,
+        Keys.hudStyle: HudStyle.compact.rawValue,
+        Keys.hudIndicatorStyle: HudIndicatorStyle.bar.rawValue,
+        Keys.hudIndicatorTintStyle: HudIndicatorTintStyle.levelColor.rawValue,
+        Keys.hudIndicatorGlowEnabled: true,
+        Keys.hudColoredLevelEnabled: true,
+        Keys.hudColoredStrokeEnabled: false,
+        Keys.hotspotLiveActivityEnabled: true,
+        Keys.vpnLiveActivityEnabled: true,
+        Keys.focusLiveActivityEnabled: true,
+        Keys.focusOnAutoHideEnabled: true,
+        Keys.focusOnTemporaryActivityDuration: 3,
+        Keys.focusAppearanceStyle: FocusAppearanceStyle.iconsOnly.rawValue,
+        Keys.nowPlayingLiveActivityEnabled: true,
+        Keys.closeAtFocusLiveActivityEnabled: true,
+        Keys.nowPlayingFavoriteButtonVisible: true,
+        Keys.nowPlayingOutputDeviceButtonVisible: true,
+        Keys.nowPlayingArtwork3DEffectEnabled: true,
+        Keys.nowPlayingPauseHideTimerEnabled: true,
+        Keys.nowPlayingPauseHideDelay: 5,
+        Keys.nowPlayingSourceFilter: NowPlayingSourceFilter.any.rawValue,
+        Keys.downloadsLiveActivityEnabled: true,
+        Keys.downloadsProgressIndicatorStyle: DownloadProgressIndicatorStyle.percent.rawValue,
+        Keys.dragAndDropLiveActivityEnabled: true,
+        Keys.airDropLiveActivityEnabled: true,
+        Keys.dragAndDropActivityMode: DragAndDropActivityMode.combined.rawValue,
+        Keys.trayLiveActivityEnabled: true,
+        Keys.mirrorLiveActivityEnabled: true,
+        Keys.mirrorImageFlipped: true,
+        Keys.fileTrayUsageMode: FileTrayUsageMode.copy.rawValue,
+        Keys.fileTrayRemoveButtonHidden: false,
+        Keys.timerLiveActivityEnabled: true,
+        Keys.timerSoundEnabled: true,
+        Keys.timerSound: TimerSound.radar.rawValue,
+        Keys.screenRecordingLiveActivityEnabled: false,
+        Keys.screenRecordingStyle: ScreenRecordingStyle.detailed.rawValue,
+        Keys.screenshotActivityEnabled: false,
+        Keys.screenshotDisableSystemThumbnail: false,
+        Keys.screenshotTemporaryActivityDuration: 4,
+        Keys.screenshotAutoHideEnabled: true,
+        Keys.screenshotSavePath: "",
+        Keys.screenRecordingSavePath: "",
+        LockScreenSettings.liveActivityKey: true,
+        LockScreenSettings.soundKey: true,
+        LockScreenSettings.customSoundPathKey: "",
+        LockScreenSettings.customLockSoundPathKey: "",
+        LockScreenSettings.customUnlockSoundPathKey: "",
+        LockScreenSettings.mediaPanelKey: true,
+        LockScreenSettings.keepDisplayAwakeKey: true,
+        LockScreenSettings.widgetAppearanceStyleKey: LockScreenWidgetAppearanceStyle.liquidGlass.rawValue,
+        LockScreenSettings.widgetTintStyleKey: LockScreenWidgetTintStyle.neutral.rawValue,
+        LockScreenSettings.liquidGlassVariantKey: 8,
+        LockScreenSettings.mediaPanelBackgroundStyleKey: LockScreenMediaPanelBackgroundStyle.animatedArtwork.rawValue,
+        LockScreenSettings.lyricsEnabledKey: true,
+        LockScreenSettings.mediaPanelVerticalOffsetKey: 0.0,
+        Keys.chargerTemporaryActivityEnabled: true,
+        Keys.temporaryActivityDurationScale: 1.0,
+        Keys.chargerTemporaryActivityDuration: 4,
+        Keys.lowPowerTemporaryActivityEnabled: true,
+        Keys.lowPowerTemporaryActivityDuration: 4,
+        Keys.fullPowerTemporaryActivityEnabled: true,
+        Keys.fullPowerTemporaryActivityDuration: 4,
+        Keys.lowPowerNotificationThreshold: 20,
+        Keys.fullPowerNotificationThreshold: 100,
+        Keys.lowPowerNotificationStyle: BatteryNotificationStyle.standard.rawValue,
+        Keys.fullPowerNotificationStyle: BatteryNotificationStyle.standard.rawValue,
+        Keys.bluetoothTemporaryActivityEnabled: true,
+        Keys.bluetoothTemporaryActivityDuration: 5,
+        Keys.bluetoothAppearanceStyle: BluetoothAppearanceStyle.compact.rawValue,
+        Keys.bluetoothBatteryStrokeEnabled: false,
+        Keys.bluetoothBatteryIndicatorStyle: BluetoothBatteryIndicatorStyle.percent.rawValue,
+        Keys.vpnTemporaryActivityEnabled: true,
+        Keys.vpnTemporaryActivityDuration: 5,
+        Keys.vpnDisconnectedTemporaryActivityEnabled: true,
+        Keys.vpnDisconnectedTemporaryActivityDuration: 5,
+        Keys.noInternetTemporaryActivityEnabled: true,
+        Keys.hotspotAppearanceStyle: HotspotAppearanceStyle.minimal.rawValue,
+        Keys.networkShowVPNDetail: false,
+        Keys.networkShowVPNTimer: true,
+
+        Keys.focusOffTemporaryActivityEnabled: true,
+        Keys.focusOffTemporaryActivityDuration: 3,
+        Keys.notchSizeTemporaryActivityEnabled: true,
+        Keys.notchSizeTemporaryActivityDuration: 2,
+        Keys.lowBatterySound: true,
+        Keys.fullBatterySound: true,
+        Keys.localTimerShortcutKeyCode: 17,
+        Keys.localTimerShortcutModifiers: 786432,
+        Keys.localTimerShortcutKeyDisplay: "T",
+        Keys.calendarLiveActivity: true,
+        Keys.calendarHideWhenFocused: true,
+        Keys.calendarShowAllDay: true,
+        Keys.calendarDaysToShow: 7,
+        Keys.calendarNoticeMinutes: 15,
+        Keys.calendarIncludedCalendarIDs: [String](),
+        Keys.calendarTimeDisplayFormat: CalendarTimeDisplayFormat.exact.rawValue,
+        Keys.calendarOngoingEventHideMinutes: 0,
+        Keys.calendarPrivacyMode: false,
+        Keys.calendarSoundAlert: false,
+        Keys.calendarShowCreatedEventsOnly: false,
+        Keys.externalDrivesNotificationsEnabled: true,
+        Keys.externalDrivesNotificationDuration: 8,
+        Keys.externalDrivesShowEjected: true
+    ]
+}
