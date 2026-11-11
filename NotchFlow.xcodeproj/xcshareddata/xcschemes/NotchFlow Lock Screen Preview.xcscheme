@@ -17,7 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
                BuildableName = "NotchFlow.app"
-               BlueprintName = "DynamicNotch"
+               BlueprintName = "NotchFlow"
                ReferencedContainer = "container:NotchFlow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -35,8 +35,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F10000000000000000000006"
-               BuildableName = "DynamicNotchTests.xctest"
-               BlueprintName = "DynamicNotchTests"
+               BuildableName = "NotchFlowTests.xctest"
+               BlueprintName = "NotchFlowTests"
                ReferencedContainer = "container:NotchFlow.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -58,7 +58,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
             BuildableName = "NotchFlow.app"
-            BlueprintName = "DynamicNotch"
+            BlueprintName = "NotchFlow"
             ReferencedContainer = "container:NotchFlow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,7 +85,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
             BuildableName = "NotchFlow.app"
-            BlueprintName = "DynamicNotch"
+            BlueprintName = "NotchFlow"
             ReferencedContainer = "container:NotchFlow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -1,0 +1,70 @@
+//
+//  FocusOffNotchContent.swift
+//  NotchFlow
+//
+//  Created by Евгений Петрукович on 4/14/26.
+//
+
+internal import AppKit
+import SwiftUI
+
+struct FocusOffNotchContent: NotchContentProtocol, DynamicIslandCustomizable {
+    let id = NotchContentRegistry.Focus.inactive.id
+    var priority: Int { NotchContentRegistry.Focus.inactive.priority }
+
+    let settingsViewModel: SettingsViewModel
+    let focusModeType: FocusModeType
+    var appearanceStyle: FocusAppearanceStyle { settingsViewModel.connectivity.focusAppearanceStyle }
+    var isExpandable: Bool { true }
+
+    var strokeColor: Color {
+        focusModeType.tint.opacity(0.3)
+    }
+
+    var windowLink: (@MainActor () -> Void)? {
+        return {
+            Self.openFocusSettings()
+        }
+    }
+
+    func compactSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 70, height: baseHeight)
+    }
+    
+    func dynamicIslandSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 70, height: baseHeight)
+    }
+
+    func expandedSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 140, height: baseHeight + 60)
+    }
+    
+    func expandedDynamicIslandSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 200, height: baseHeight + 50)
+    }
+
+    func expandedCornerRadius(baseRadius: CGFloat) -> (top: CGFloat, bottom: CGFloat) {
+        NotchPageMetrics.cornerRadius
+    }
+
+    func expandedDynamicIslandCornerRadius(baseHeight: CGFloat) -> CGFloat {
+        baseHeight * 0.5
+    }
+
+    @MainActor
+    func compactView() -> AnyView {
+        AnyView(FocusOffNotchView(style: appearanceStyle, focusModeType: focusModeType))
+    }
+
+    @MainActor
+    func expandedView() -> AnyView {
+        AnyView(FocusOffExpandedNotchView(focusModeType: focusModeType))
+    }
+
+    @MainActor
+    private static func openFocusSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+}

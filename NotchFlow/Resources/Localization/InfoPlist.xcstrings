@@ -1,0 +1,154 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleDisplayName": {
+      "comment": "Bundle display name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "NotchFlow"
+          }
+        }
+      }
+    },
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow"
+          }
+        }
+      }
+    },
+    "NSAppleEventsUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We need access to media data for display in Notch."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cần quyền truy cập dữ liệu phương tiện để hiển thị trên notch."
+          }
+        }
+      }
+    },
+    "NSBluetoothAlwaysUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app requires Bluetooth access to check the status of devices."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ứng dụng cần quyền truy cập Bluetooth để kiểm tra trạng thái thiết bị."
+          }
+        }
+      }
+    },
+    "NSCalendarsFullAccessUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow needs access to your calendar to display upcoming events in the notch."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
+          }
+        }
+      }
+    },
+    "NSCalendarsUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow needs access to your calendar to display upcoming events in the notch."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow needs access to your camera to display a camera preview in the notch."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NotchFlow cần quyền truy cập camera để hiển thị bản xem trước trên notch."
+          }
+        }
+      }
+    },
+    "NSHumanReadableCopyright": {
+      "comment": "Copyright (human-readable)",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copyright © 2025 jackson-storm. All rights reserved."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản quyền © 2025 jackson-storm. Bảo lưu mọi quyền."
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app requires local network access to determine the name of your current Wi-Fi network."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ứng dụng cần quyền truy cập mạng cục bộ để xác định tên mạng Wi-Fi hiện tại."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.1"
+}

@@ -1,0 +1,384 @@
+//
+//  TrayExpandedActiveNotchView.swift
+//  NotchFlow
+//
+//  Created by Евгений Петрукович on 4/26/26.
+//
+
+import SwiftUI
+import QuickLookUI
+internal import AppKit
+
+struct TrayExpandedActiveNotchView: View {
+    @Environment(\.notchScale) private var scale
+    @Environment(\.isNotchlessScreen) private var isNotchlessScreen
+    @Environment(\.locale) private var locale
+    @ObservedObject var fileTrayViewModel: FileTrayViewModel
+    @ObservedObject var mediaSettings: MediaAndFilesSettingsStore
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            if fileTrayViewModel.items.isEmpty {
+                VStack(spacing: 6) {
+                    Image(systemName: "tray.and.arrow.down").font(.system(size: 22, weight: .regular))
+                        .frame(height: 26)
+                    Text(locale.nf("notchflow.tray.empty", fallback: "Drop files here"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                    Text(locale.nf("notchflow.tray.emptyHint", fallback: "Swipe sideways to switch pages"))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.55))
+                }
+                .foregroundStyle(.white.opacity(0.75))
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .frame(maxWidth: .infinity, minHeight: 80)
+            } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    trayItemViews
+                }
+            }
+            .frame(maxHeight: 100)
+            }
+        }
+        .notchPagePadding(isNotchless: isNotchlessScreen)
+    }
+    
+    @ViewBuilder
+    private var trayItemViews: some View {
+        ForEach(fileTrayViewModel.items) { item in
+            let isSelected = fileTrayViewModel.selectedItemIDs.contains(item.id)
+            
+            TrayExpandedItemView(
+                item: item,
+                isSelected: isSelected,
+                showsRemoveButton: !mediaSettings.isFileTrayRemoveButtonHidden,
+                draggedItems: {
+                    fileTrayViewModel.itemsForDrag(startingAt: item)
+                },
+                onMoveCompleted: { movedItems in
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        fileTrayViewModel.forgetMovedOutItems(movedItems)
+                    }
+                },
+                onSelect: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        fileTrayViewModel.toggleSelection(for: item)
+                    }
+                },
+                onRemove: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        fileTrayViewModel.remove(item)
+                    }
+                }
+            )
+            .transition(
+                .blurAndFade
+                    .combined(with: .scale)
+                    .combined(with: .opacity)
+            )
+        }
+    }
+}
+
+private struct TrayExpandedItemView: View {
+    let item: FileTrayItem
+    let isSelected: Bool
+    let showsRemoveButton: Bool
+    let draggedItems: () -> [FileTrayItem]
+    let onMoveCompleted: ([FileTrayItem]) -> Void
+    let onSelect: () -> Void
+    let onRemove: () -> Void
+    
+    @State private var isPressed = false
+    
+    var body: some View {
+        VStack(spacing: 7) {
+            Image(nsImage: item.icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 42, height: 42)
+                .padding(.top, 4)
+                .frame(width: 55, height: 47)
+            
+            Text(item.displayName)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.white.opacity(0.86))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .frame(width: 72, height: 28)
+        }
+        .frame(width: 80, height: 94)
+        .background { CrystalGlassSurface(cornerRadius: 16) }
+        .overlay {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 16).strokeBorder(.white.opacity(0.75), lineWidth: 1.5)
+            }
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            TrayExpandedItemDragView(
+                showsRemoveButton: showsRemoveButton,
+                draggedItems: draggedItems,
+                onMoveCompleted: onMoveCompleted,
+                onSelect: onSelect,
+                onPressedChange: { isPressed in
+                    self.isPressed = isPressed
+                }
+            )
+        }
+        .overlay(alignment: .topTrailing) {
+            if showsRemoveButton {
+                Button(action: onRemove) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.75))
+                }
+                .buttonStyle(PressedButtonStyle(width: 18, height: 18))
+                .padding(.top, 5)
+                .padding(.trailing, 5)
+            }
+        }
+        .scaleEffect(isPressed ? 0.9 : 1)
+        .animation(.spring(response: 0.22, dampingFraction: 0.58), value: isPressed)
+        .help(item.url.path)
+    }
+}
+
+private struct TrayExpandedItemDragView: NSViewRepresentable {
+    let showsRemoveButton: Bool
+    let draggedItems: () -> [FileTrayItem]
+    let onMoveCompleted: ([FileTrayItem]) -> Void
+    let onSelect: () -> Void
+    let onPressedChange: (Bool) -> Void
+    
+    func makeNSView(context: Context) -> TrayExpandedItemDragNSView {
+        let view = TrayExpandedItemDragNSView()
+        view.showsRemoveButton = showsRemoveButton
+        view.draggedItems = draggedItems
+        view.onMoveCompleted = onMoveCompleted
+        view.onSelect = onSelect
+        view.onPressedChange = onPressedChange
+        return view
+    }
+    
+    func updateNSView(_ nsView: TrayExpandedItemDragNSView, context: Context) {
+        nsView.showsRemoveButton = showsRemoveButton
+        nsView.draggedItems = draggedItems
+        nsView.onMoveCompleted = onMoveCompleted
+        nsView.onSelect = onSelect
+        nsView.onPressedChange = onPressedChange
+    }
+}
+
+final class TrayExpandedItemDragNSView: NSView, NSDraggingSource, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
+    var showsRemoveButton = true
+    var draggedItems: () -> [FileTrayItem] = { [] }
+    var onMoveCompleted: ([FileTrayItem]) -> Void = { _ in }
+    var onSelect: () -> Void = {}
+    var onPressedChange: (Bool) -> Void = { _ in }
+    
+    private var mouseDownEvent: NSEvent?
+    private var didBeginDragging = false
+    private var activeDragItems: [FileTrayItem] = []
+    
+    override var acceptsFirstResponder: Bool { true }
+    
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        true
+    }
+    
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        if showsRemoveButton && closeButtonHitRect.contains(convert(point, from: superview)) {
+            return nil
+        }
+        
+        return super.hitTest(point)
+    }
+    
+    override func mouseDown(with event: NSEvent) {
+        mouseDownEvent = event
+        didBeginDragging = false
+        onPressedChange(true)
+        
+        if let window = self.window, window.firstResponder != self {
+            window.makeFirstResponder(self)
+        }
+    }
+    
+    override func mouseDragged(with event: NSEvent) {
+        guard didBeginDragging == false,
+              let mouseDownEvent else {
+            return
+        }
+        
+        let startPoint = convert(mouseDownEvent.locationInWindow, from: nil)
+        let currentPoint = convert(event.locationInWindow, from: nil)
+        let distance = hypot(currentPoint.x - startPoint.x, currentPoint.y - startPoint.y)
+        
+        guard distance >= 3 else {
+            return
+        }
+        
+        didBeginDragging = true
+        onPressedChange(false)
+        beginDragging(with: event)
+    }
+    
+    override func mouseUp(with event: NSEvent) {
+        onPressedChange(false)
+        
+        if didBeginDragging == false {
+            onSelect()
+        }
+        
+        mouseDownEvent = nil
+        didBeginDragging = false
+    }
+    
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 49 {
+            toggleQuickLook()
+        } else {
+            super.keyDown(with: event)
+        }
+    }
+    
+    private func toggleQuickLook() {
+        guard let panel = QLPreviewPanel.shared() else { return }
+        
+        if QLPreviewPanel.sharedPreviewPanelExists() && panel.isVisible {
+            panel.orderOut(nil)
+        } else {
+            panel.updateController()
+            panel.delegate = self
+            panel.dataSource = self
+            panel.makeKeyAndOrderFront(nil)
+        }
+    }
+    
+    func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
+        return draggedItems().count
+    }
+    
+    func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> QLPreviewItem! {
+        let items = draggedItems()
+        guard index < items.count else { return nil }
+        return items[index].url as NSURL
+    }
+    
+    func previewPanel(_ panel: QLPreviewPanel!, sourceFrameOnScreenFor item: QLPreviewItem!) -> NSRect {
+        guard let window = self.window else { return .zero }
+        let rectInWindow = self.convert(self.bounds, to: nil)
+        return window.convertToScreen(rectInWindow)
+    }
+    
+    override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
+        return true
+    }
+    
+    override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        panel.delegate = self
+        panel.dataSource = self
+    }
+    
+    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        
+    }
+    
+    func draggingSession(
+        _ session: NSDraggingSession,
+        sourceOperationMaskFor context: NSDraggingContext
+    ) -> NSDragOperation {
+        dragOperation(for: activeDragItems)
+    }
+    
+    func draggingSession(
+        _ session: NSDraggingSession,
+        endedAt screenPoint: NSPoint,
+        operation: NSDragOperation
+    ) {
+        defer {
+            activeDragItems = []
+            mouseDownEvent = nil
+            didBeginDragging = false
+        }
+        
+        guard operation.contains(.move) else {
+            return
+        }
+        
+        let movedItems = activeDragItems.filter(\.movesOutOfTrayOnDrag)
+        guard movedItems.isEmpty == false else {
+            return
+        }
+        
+        onMoveCompleted(movedItems)
+    }
+    
+    func ignoreModifierKeys(for session: NSDraggingSession) -> Bool {
+        true
+    }
+    
+    private func beginDragging(with event: NSEvent) {
+        let items = draggedItems()
+        guard items.isEmpty == false else {
+            return
+        }
+        
+        activeDragItems = items
+        
+        let point = convert(event.locationInWindow, from: nil)
+        let draggingItems = items.enumerated().map { index, item in
+            makeDraggingItem(for: item, index: index, at: point)
+        }
+        
+        beginDraggingSession(with: draggingItems, event: event, source: self)
+        mouseDownEvent = nil
+    }
+    
+    private func dragOperation(for items: [FileTrayItem]) -> NSDragOperation {
+        guard items.isEmpty == false else {
+            return []
+        }
+        
+        return items.allSatisfy(\.movesOutOfTrayOnDrag) ? .move : .copy
+    }
+    
+    private func makeDraggingItem(
+        for item: FileTrayItem,
+        index: Int,
+        at point: NSPoint
+    ) -> NSDraggingItem {
+        let dragSize = NSSize(width: 48, height: 48)
+        let offset = CGFloat(min(index, 4)) * 4
+        let frame = NSRect(
+            x: point.x - (dragSize.width / 2) + offset,
+            y: point.y - (dragSize.height / 2) - offset,
+            width: dragSize.width,
+            height: dragSize.height
+        )
+        let draggingItem = NSDraggingItem(
+            pasteboardWriter: FileTrayPasteboardWriter(url: item.url)
+        )
+        
+        draggingItem.setDraggingFrame(frame, contents: dragImage(for: item, size: dragSize))
+        return draggingItem
+    }
+    
+    private func dragImage(for item: FileTrayItem, size: NSSize) -> NSImage {
+        let image = (item.icon.copy() as? NSImage) ?? item.icon
+        image.size = size
+        return image
+    }
+    
+    private var closeButtonHitRect: NSRect {
+        NSRect(
+            x: bounds.maxX - 30,
+            y: bounds.maxY - 30,
+            width: 30,
+            height: 30
+        )
+    }
+}

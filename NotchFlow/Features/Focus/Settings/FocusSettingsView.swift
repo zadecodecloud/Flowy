@@ -1,0 +1,118 @@
+import SwiftUI
+
+struct FocusSettingsView: View {
+    @ObservedObject var connectivitySettings: ConnectivitySettingsStore
+    @ObservedObject var appearanceSettings: ApplicationSettingsStore
+    @Environment(\.locale) private var locale
+    
+    private var temporaryActivityDurationRange: ClosedRange<Double> {
+        Double(SettingsStoreBase.temporaryActivityDurationRange.lowerBound)...Double(SettingsStoreBase.temporaryActivityDurationRange.upperBound)
+    }
+
+    var body: some View {
+        SettingsPageScrollView {
+            focusActivity
+            focusAppearance
+        }
+    }
+    
+    private var focusActivity: some View {
+        SettingsCard(title: "settings.focus.card.activity") {
+            SettingsToggleRow(
+                title: "settings.focus.liveActivity.title",
+                description: "settings.focus.liveActivity.desc",
+                systemImage: "moon.fill",
+                color: .indigo,
+                isOn: $connectivitySettings.isFocusLiveActivityEnabled,
+                accessibilityIdentifier: "settings.activities.live.focus"
+            )
+
+            Divider()
+                .opacity(0.6)
+                .padding(.leading, 43)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+
+            SettingsToggleRow(
+                title: "settings.focus.offActivity.title",
+                description: "settings.focus.offActivity.desc",
+                systemImage: "moon.stars.fill",
+                color: .indigo,
+                isOn: $connectivitySettings.isFocusOffTemporaryActivityEnabled,
+                accessibilityIdentifier: "settings.activities.temporary.focusOff"
+            )
+            
+            Divider()
+                .opacity(0.6)
+                .padding(.leading, 43)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+
+            SettingsToggleRow(
+                title: "settings.focus.autoHide.title",
+                description: "settings.focus.autoHide.desc",
+                systemImage: "moon.zzz.fill",
+                color: .red,
+                isOn: $connectivitySettings.isFocusOnAutoHideEnabled,
+                accessibilityIdentifier: "settings.activities.live.focus.autoHide"
+            )
+            .disabled(!connectivitySettings.isFocusLiveActivityEnabled)
+            .opacity(connectivitySettings.isFocusLiveActivityEnabled ? 1 : 0.5)
+        }
+    }
+    
+    private var focusAppearance: some View {
+        SettingsCard(title: "settings.focus.card.appearance") {
+            CustomPicker(
+                selection: $connectivitySettings.focusAppearanceStyle,
+                options: Array(FocusAppearanceStyle.allCases),
+                title: { $0.title },
+                headerTitle: "settings.focus.style.headerTitle",
+                headerDescription: "settings.focus.style.headerDesc",
+                itemHeight: 72,
+                lightBackgroundImage: Image("backgroundLight"),
+                darkBackgroundImage: Image("backgroundDark")
+            ) { style, isSelected in
+                focusStylePickerContent(for: style, isSelected: isSelected)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func focusStylePickerContent(for style: FocusAppearanceStyle, isSelected: Bool) -> some View {
+        ZStack {
+            Capsule()
+                .fill(.black)
+                .overlay {
+                    Capsule()
+                        .stroke(focusPreviewStrokeColor, lineWidth: 1)
+                }
+            
+            HStack {
+                if style == .iconsOnly {
+                    Image(systemName: "moon.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.indigo)
+                    
+                    Spacer()
+                    
+                } else {
+                    Image(systemName: "moon.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.indigo)
+                    
+                    Spacer()
+                    
+                    Text(locale.nf("notch.focus.on", fallback: "On."))
+                        .foregroundStyle(.indigo.opacity(0.8))
+                }
+            }
+            .padding(.leading, 7)
+            .padding(.trailing, 10)
+        }
+        .frame(width: 130, height: 30)
+        .scaleEffect(isSelected ? 1 : 0.97)
+    }
+    
+    private var focusPreviewStrokeColor: Color {
+        appearanceSettings.isShowNotchStrokeEnabled ? .indigo.opacity(0.3) : .clear
+    }
+}

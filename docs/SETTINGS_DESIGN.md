@@ -1,6 +1,6 @@
 # NotchFlow Settings
 
-Standalone source snapshot; no upstream Git remote. Still a GPL-3.0 derivative of DynamicNotch. Project: `NotchFlow.xcodeproj`, shared scheme: `NotchFlow`. Swift module/target retain their existing internal names.
+Standalone source tree. GPL-3.0. Project: `NotchFlow.xcodeproj`, shared scheme: `NotchFlow`. Swift module/target retain their existing internal names.
 
 The new Settings shell is inspired by the reference Canopy window observed locally: a quiet sidebar, search, clear section heading and grouped controls. It uses native SwiftUI controls, SF Symbols and the existing feature settings models; it does not include Canopy assets or code. Appearance adapts to light/dark settings. `Features/Settings/Root/Views/SettingsRootView.swift` owns the shell and navigation; `Features/Settings/Shared/Components` owns reusable styling; feature pages remain under their respective Features directories.
 

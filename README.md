@@ -1,8 +1,10 @@
-# NotchFlow — incomplete development fork
+# NotchFlow
 
-NotchFlow is a work-in-progress derivative of [DynamicNotch](https://github.com/jackson-storm/DynamicNotch) at commit `61657ee7fa7a96633f49d1eda803296030a4f4fa`. Upstream authors retain their copyright. The source is GPL-3.0; see `LICENSE`, source notices, `THIRD_PARTY_NOTICES/` and `README.UPSTREAM.md`. The changes from the audited baseline are described in the documentation; this snapshot has no Git history. This checkout is corresponding source for these local changes; preserve all notices and provide complete corresponding source when distributing a modified binary.
+NotchFlow is a macOS notch companion: media, a file tray and a camera mirror, switched by swiping sideways on the open notch. It is a work in progress.
 
-**Not ready for use or distribution.** The fork has only initial safety changes and has not met the requested feature or runtime acceptance tests. Do not run it against important files or enable system integrations until the remaining work is completed. The screenshot preference setters and stop-by-process-name action have been disabled, but screenshot monitoring, recording attribution and private callback lifetime still require correction. Upstream scripts can install over an application in /Applications; do not run them.
+**License.** NotchFlow is GPL-3.0. It contains code derived from an earlier open-source notch project; those authors keep their copyright, which is recorded in `LICENSE`, the source file headers and `THIRD_PARTY_NOTICES/`. Keep these notices and ship complete corresponding source with any modified binary you distribute.
+
+**Not ready for distribution.** Screenshot monitoring, recording attribution and private callback lifetime still need correction; avoid enabling screenshot integration. Dragging files onto the notch is currently not working (investigation paused).
 
 ## Build
 
@@ -17,17 +19,17 @@ The Debug product is `build/DerivedData/Build/Products/Debug/NotchFlow.app`. A n
 
 ## Permissions and cleanup
 
-Feature permissions may include Calendar, Accessibility and others; the upstream consent flows remain unaudited. No permissions or Keychain entries were changed by this development work. Quit the app before deleting any local build. This fork does not migrate or delete upstream Keychain entries. Global screenshot preference recovery is not yet implemented; avoid enabling screenshot integration. Launch at login defaults off; its identity and uninstall/recovery behavior still require verification.
+Feature permissions may include Calendar, Accessibility and others; the inherited consent flows remain unaudited. No permissions or Keychain entries were changed by this development work. Quit the app before deleting any local build. Global screenshot preference recovery is not yet implemented; avoid enabling screenshot integration. Launch at login defaults off; its identity and uninstall/recovery behavior still require verification.
 
 ## Language and identity
 
-NotchFlow defaults to Vietnamese. Existing Russian/system selections from the earlier fork are switched once to Vietnamese; later choices are respected and other explicitly selected languages are retained. Vietnamese is available both for Settings and notch activities. Some inherited strings still fall back to English; translation coverage and visual layout are not fully audited.
+NotchFlow defaults to English. Vietnamese and other languages can be chosen separately for Settings and for notch activities; a one-time migration moved existing installs to English.
 
-The current app icon is the system placeholder, intentionally leaving visual design for a later pass. The internal Swift module remains named DynamicNotch for compatibility; NotchFlow is a GPL-3.0 derivative, with upstream attribution retained in the source and license documents. Tray copies now use Application Support/NotchFlow/FileTray. Previously stored upstream-path files are not automatically moved or deleted; startup no longer deletes untracked tray files.
+The current app icon is the system placeholder. Source lives in `NotchFlow/`, tests in `NotchFlowTests/` and `NotchFlowUITests/`; the Swift module is `NotchFlow`. Tray copies use Application Support/NotchFlow/FileTray; startup does not delete untracked tray files.
 
-## Standalone project
+## Debug review hooks
 
-This standalone source snapshot is not connected to the upstream Git remote. It remains a GPL-3.0 derivative because it contains upstream source. The `NotchFlow` shared scheme opens from `NotchFlow.xcodeproj`. The older upstream install scripts, appcast and community files are retained under `upstream-reference/` for provenance and should not be used: the install script can overwrite files in `/Applications`. `scripts/build-local.sh` builds locally without installation.
+Debug builds accept `-NotchFlowDebugOpenPage media|tray|mirror` to open a page at launch; add `-isNotchLocked YES` to keep it expanded without saving that preference.
 
 ## Settings design
 

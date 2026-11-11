@@ -53,7 +53,7 @@ Before public distribution: audit and test the inherited integrations and file s
 prepare a real update feed and release infrastructure, set a unique bundle identifier,
 sign with your Developer ID, enable an appropriate hardened runtime, notarize, and test
 the downloaded build on clean supported Macs. No distribution certificate, notarization,
-website, or public publishing has been configured. Keep the GPL license and all upstream
+website, or public publishing has been configured. Keep the GPL license and all original
 and third-party notices, and provide complete corresponding source and build information
 when distributing the binary. A paid edition does not remove GPL obligations; recipients
 can exercise their GPL rights, including modifying the available source.

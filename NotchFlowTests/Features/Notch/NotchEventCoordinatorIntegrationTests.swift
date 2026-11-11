@@ -1,0 +1,986 @@
+import AppKit
+import Combine
+import XCTest
+@testable import NotchFlow
+
+@MainActor
+final class NotchEventCoordinatorIntegrationTests: XCTestCase {
+    func testFreeUserCanReachMirrorWithoutOpeningProTray() async {
+        let context = makeContext(proEnabled: false)
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.media.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.mirror.contentID } }
+        context.coordinator.openPage(.tray)
+        XCTAssertNotEqual(context.notchViewModel.displayedContent?.id, NotchPage.tray.contentID)
+    }
+    func testThreePageSequenceAndMirrorStopsWhenClosedOrLocked() async {
+        let context = makeContext()
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.media.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.tray.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.mirror.contentID && context.notchViewModel.isDisplayingExpandedLiveActivity } }
+        await assertEventually { await MainActor.run { context.coordinator.mirrorCamera.state == .unavailable } }
+        context.notchViewModel.handleOutsideClick()
+        await assertEventually { await MainActor.run { context.coordinator.mirrorCamera.state == .inactive } }
+        context.coordinator.openPage(.tray)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.tray.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.mirror.contentID && context.coordinator.mirrorCamera.state == .unavailable } }
+        context.lockScreenManager.setDebugLockState(true)
+        await assertEventually { await MainActor.run { context.coordinator.mirrorCamera.state == .inactive } }
+    }
+
+    func testDisablingMirrorSettingRemovesItFromPageRotation() async {
+        let context = makeContext(mirrorLiveActivityEnabled: false)
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.media.contentID } }
+        // Media -> tray is still reachable; the rotation now ends there.
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.tray.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        try? await Task.sleep(for: .milliseconds(100))
+        XCTAssertEqual(context.notchViewModel.displayedContent?.id, NotchPage.tray.contentID)
+        // Direct opening is refused too, and the camera is never activated.
+        context.coordinator.openPage(.mirror)
+        try? await Task.sleep(for: .milliseconds(100))
+        XCTAssertNotEqual(context.notchViewModel.displayedContent?.id, NotchPage.mirror.contentID)
+        XCTAssertEqual(context.coordinator.mirrorCamera.state, .inactive)
+    }
+
+    func testSwipeOpensEmptyTrayAndReturnsToMusicWithoutLosingSession() async {
+        let context = makeContext()
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.DragAndDrop.trayActive.id && context.notchViewModel.notchModel.isExpanded } }
+        context.coordinator.switchNotchPage(.left)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id } }
+        XCTAssertTrue(context.nowPlayingViewModel.hasActiveSession)
+        XCTAssertTrue(context.fileTrayViewModel.items.isEmpty)
+    }
+
+    func testLeavingEmptyTrayAfterMusicEndsRestoresIdleNotch() async {
+        let context = makeContext()
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.DragAndDrop.trayActive.id } }
+        context.coordinator.switchNotchPage(.left)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent == nil } }
+    }
+
+    /// Without Pro the tray leaves the rotation, so a swipe skips over it to Mirror
+    /// and no amount of swiping can reach the tray.
+    func testFreeLicenseCannotOpenTrayBySwiping() async {
+        let context = makeContext(proEnabled: false)
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id } }
+        context.coordinator.switchNotchPage(.right)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchPage.mirror.contentID } }
+        context.coordinator.switchNotchPage(.right)
+        try? await Task.sleep(for: .milliseconds(100))
+        XCTAssertNotEqual(context.notchViewModel.displayedContent?.id, NotchContentRegistry.DragAndDrop.trayActive.id)
+    }
+
+    /// With Mirror switched off as well, a free user has nowhere to swipe: the media
+    /// page is the whole rotation and the tray stays unreachable.
+    func testFreeLicenseWithMirrorDisabledKeepsMediaAsOnlyPage() async {
+        let context = makeContext(mirrorLiveActivityEnabled: false, proEnabled: false)
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(.started)
+        await assertEventually { await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id } }
+        context.coordinator.switchNotchPage(.right)
+        try? await Task.sleep(for: .milliseconds(100))
+        XCTAssertEqual(context.notchViewModel.displayedContent?.id, NotchContentRegistry.Media.nowPlaying.id)
+    }
+
+    func testOnboardingBlocksPowerNotifications() async {
+        let context = makeContext()
+
+        context.coordinator.handleOnboardingEvent(.onboarding)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == OnboardingSteps.first.liveActivityID
+            }
+        }
+
+        context.coordinator.handlePowerEvent(.charger)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let state = await MainActor.run { context.notchViewModel.notchModel }
+        XCTAssertEqual(state.liveActivityContent?.id, OnboardingSteps.first.liveActivityID)
+        XCTAssertNil(state.temporaryNotificationContent)
+    }
+
+    func testFocusOffReplacesFocusLiveActivityWithTemporaryNotification() async {
+        let context = makeContext(focusOnAutoHideEnabled: false)
+
+        context.coordinator.handleFocusEvent(.FocusOn(.doNotDisturb))
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Focus.active.id }
+        }
+
+        context.coordinator.handleFocusEvent(.FocusOff(.doNotDisturb))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent == nil &&
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Focus.inactive.id
+            }
+        }
+    }
+
+    func testSleepFocusOnAndOffLiveActivityDismissal() async {
+        let context = makeContext(focusOnAutoHideEnabled: false)
+
+        context.coordinator.handleFocusEvent(.FocusOn(.sleep))
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Focus.active.id }
+        }
+
+        context.coordinator.handleFocusEvent(.FocusOff(.sleep))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent == nil &&
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Focus.inactive.id
+            }
+        }
+    }
+
+    func testFocusOnWithAutoHideShowsTemporaryNotificationAndDismisses() async {
+        let context = makeContext(
+            temporaryActivityDurationScale: 0.2,
+            focusOnAutoHideEnabled: true
+        )
+
+        context.coordinator.handleFocusEvent(.FocusOn(.sleep))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Focus.active.id &&
+                context.notchViewModel.notchModel.liveActivityContent == nil
+            }
+        }
+
+        await assertEventually(timeout: 1.5) {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent == nil &&
+                context.notchViewModel.notchModel.liveActivityContent == nil
+            }
+        }
+    }
+
+    func testTogglingFocusAutoHideHidesExistingLiveActivity() async {
+        let context = makeContext(focusOnAutoHideEnabled: false)
+
+        context.coordinator.handleFocusEvent(.FocusOn(.sleep))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Focus.active.id
+            }
+        }
+
+        await MainActor.run {
+            context.settingsViewModel.connectivity.isFocusOnAutoHideEnabled = true
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent == nil
+            }
+        }
+    }
+
+    func testHotspotEventsShowAndHideLiveActivity() async {
+        let context = makeContext()
+
+        context.coordinator.handleWifiEvent(.hotspotActive)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Wifi.hotspot.id }
+        }
+
+        context.coordinator.handleWifiEvent(.hotspotHide)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.content == nil }
+        }
+    }
+
+    func testVpnEventsShowAndHideLiveActivity() async {
+        let context = makeContext()
+
+        context.coordinator.handleVpnEvent(.vpnConnected)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Vpn.vpn.id }
+        }
+
+        context.coordinator.handleVpnEvent(.vpnDisconnected)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.content == nil }
+        }
+    }
+
+    func testDisabledVpnLiveActivitySuppressesVpnLiveActivity() async {
+        let context = makeContext(vpnLiveActivityEnabled: false)
+
+        context.coordinator.handleVpnEvent(.vpnConnected)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let liveContent = await MainActor.run {
+            context.notchViewModel.notchModel.liveActivityContent
+        }
+        XCTAssertNil(liveContent)
+    }
+
+    func testTogglingVpnLiveActivityShowsAndHidesActiveVpnLiveActivity() async {
+        let context = makeContext(vpnLiveActivityEnabled: false)
+        await MainActor.run {
+            context.vpnViewModel.vpnConnected = true
+        }
+
+        await MainActor.run {
+            context.settingsViewModel.isVpnLiveActivityEnabled = true
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Vpn.vpn.id
+            }
+        }
+
+        await MainActor.run {
+            context.settingsViewModel.isVpnLiveActivityEnabled = false
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.content == nil
+            }
+        }
+    }
+
+    func testVpnLiveActivityHidesWhenVpnSettingsTabActiveAndRestoresWhenInactive() async {
+        let context = makeContext()
+        await MainActor.run {
+            context.vpnViewModel.vpnConnected = true
+        }
+
+        context.coordinator.handleVpnEvent(.vpnConnected)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Vpn.vpn.id
+            }
+        }
+
+        // When VPN tab becomes active in Settings, Live Activity should hide
+        await MainActor.run {
+            context.settingsViewModel.isVpnSettingsTabActive = true
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.content == nil
+            }
+        }
+
+        // When VPN tab becomes inactive in Settings, Live Activity should reappear
+        await MainActor.run {
+            context.settingsViewModel.isVpnSettingsTabActive = false
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Vpn.vpn.id
+            }
+        }
+    }
+
+    func testVpnConnectedEventIgnoredWhenVpnSettingsTabActive() async {
+        let context = makeContext()
+        await MainActor.run {
+            context.vpnViewModel.vpnConnected = true
+            context.settingsViewModel.isVpnSettingsTabActive = true
+        }
+
+        context.coordinator.handleVpnEvent(.vpnConnected)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let liveContent = await MainActor.run {
+            context.notchViewModel.notchModel.liveActivityContent
+        }
+        XCTAssertNil(liveContent)
+
+        // Once inactive, live activity should be restored
+        await MainActor.run {
+            context.settingsViewModel.isVpnSettingsTabActive = false
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Vpn.vpn.id
+            }
+        }
+    }
+
+    func testNoInternetEventShowsTemporaryNotification() async {
+        let context = makeContext()
+
+        context.coordinator.handleWifiEvent(.noInternetConnection)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Wifi.noInternet.id
+            }
+        }
+    }
+
+    func testDisabledNoInternetTemporaryActivitySuppressesNotification() async {
+        let context = makeContext(noInternetTemporaryActivityEnabled: false)
+
+        context.coordinator.handleWifiEvent(.noInternetConnection)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let temporaryContent = await MainActor.run {
+            context.notchViewModel.notchModel.temporaryNotificationContent
+        }
+        XCTAssertNil(temporaryContent)
+    }
+
+    func testHardwareHUDNeverTakesOverTheNotchWhenTheFeatureIsOff() async throws {
+        try XCTSkipIf(NotchFeatures.isHardwareHUDEnabled)
+        let context = makeContext()
+        context.coordinator.handleHudEvent(.volume(72))
+        context.coordinator.handleHudEvent(.display(40))
+        context.coordinator.handleHudEvent(.keyboard(30))
+        try? await Task.sleep(nanoseconds: 150_000_000)
+        let temporary = await MainActor.run { context.notchViewModel.notchModel.temporaryNotificationContent }
+        XCTAssertNil(temporary)
+    }
+
+    func testVolumeHUDEventsShowTemporaryNotificationWhenEnabled() async throws {
+        try XCTSkipUnless(NotchFeatures.isHardwareHUDEnabled, "Hardware HUD feature is switched off")
+        let context = makeContext()
+
+        context.coordinator.handleHudEvent(.volume(72))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.HUD.system.id
+            }
+        }
+    }
+
+    func testVolumeHUDShowOnLockScreen() async throws {
+        try XCTSkipUnless(NotchFeatures.isHardwareHUDEnabled, "Hardware HUD feature is switched off")
+        let context = makeContext()
+
+        context.lockScreenService.publish(isLocked: true)
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.LockScreen.activity.id
+            }
+        }
+
+        context.coordinator.handleHudEvent(.volume(72))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.HUD.system.id
+            }
+        }
+    }
+
+    func testChargerNotificationShowOnLockScreen() async {
+        let context = makeContext()
+
+        context.lockScreenService.publish(isLocked: true)
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.LockScreen.activity.id
+            }
+        }
+
+        context.coordinator.handlePowerEvent(.charger)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Power.charger.id
+            }
+        }
+    }
+
+    func testDisabledVolumeHUDSuppressesTemporaryNotification() async {
+        let context = makeContext(volumeHUDEnabled: false)
+
+        context.coordinator.handleHudEvent(.volume(72))
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let temporaryContent = await MainActor.run {
+            context.notchViewModel.notchModel.temporaryNotificationContent
+        }
+        XCTAssertNil(temporaryContent)
+    }
+
+    func testDisabledBrightnessHUDSuppressesTemporaryNotification() async {
+        let context = makeContext(brightnessHUDEnabled: false)
+
+        context.coordinator.handleHudEvent(.display(44))
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let temporaryContent = await MainActor.run {
+            context.notchViewModel.notchModel.temporaryNotificationContent
+        }
+        XCTAssertNil(temporaryContent)
+    }
+
+    func testDisabledKeyboardHUDSuppressesTemporaryNotification() async {
+        let context = makeContext(keyboardHUDEnabled: false)
+
+        context.coordinator.handleHudEvent(.keyboard(61))
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let temporaryContent = await MainActor.run {
+            context.notchViewModel.notchModel.temporaryNotificationContent
+        }
+        XCTAssertNil(temporaryContent)
+    }
+
+    func testTemporaryDurationScaleShortensHUDLifetime() async throws {
+        try XCTSkipUnless(NotchFeatures.isHardwareHUDEnabled, "Hardware HUD feature is switched off")
+        let context = makeContext(temporaryActivityDurationScale: 0.5)
+
+        context.coordinator.handleHudEvent(.volume(72))
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.HUD.system.id
+            }
+        }
+
+        await assertEventually(timeout: 1.3) {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent == nil
+            }
+        }
+    }
+
+    func testNowPlayingEventsShowAndHideLiveActivity() async {
+        let context = makeContext()
+
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+
+        context.nowPlayingService.publish(nil)
+        context.coordinator.handleNowPlayingEvent(.stopped)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.content == nil }
+        }
+    }
+
+    func testPlayingSourceStaysVisibleWhenSourceIsFrontmost() async throws {
+        let frontmost = try XCTUnwrap(NSWorkspace.shared.frontmostApplication)
+        let context = makeContext()
+        context.settingsViewModel.application.isCloseAtFocusLiveActivityEnabled = true
+        let source = NowPlayingPlaybackSource(bundleIdentifier: frontmost.bundleIdentifier,
+                                              parentBundleIdentifier: nil,
+                                              processIdentifier: Int(frontmost.processIdentifier))
+        context.nowPlayingService.publish(makeNowPlayingSnapshot(playbackSource: source))
+        context.coordinator.handleNowPlayingEvent(.started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+        // Repeated playback updates must not hide a source that owns the frontmost window.
+        context.coordinator.handleNowPlayingEvent(.playbackStateChanged(isPlaying: true))
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(context.notchViewModel.notchModel.liveActivityContent?.id, NotchContentRegistry.Media.nowPlaying.id)
+    }
+
+    func testPausedNowPlayingHidesAfterConfiguredDelay() async {
+        let context = makeContext(nowPlayingPauseHideTimerEnabled: true, nowPlayingPauseHideDelay: 1)
+
+        context.nowPlayingService.publish(makeNowPlayingSnapshot(playbackRate: 0))
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+
+        await assertEventually(timeout: 1.4) {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id != NotchContentRegistry.Media.nowPlaying.id }
+        }
+    }
+
+    func testPausedNowPlayingStaysVisibleWhenPauseHideTimerIsDisabled() async {
+        let context = makeContext(nowPlayingPauseHideTimerEnabled: false, nowPlayingPauseHideDelay: 1)
+
+        context.nowPlayingService.publish(makeNowPlayingSnapshot(playbackRate: 0))
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+
+        try? await Task.sleep(nanoseconds: 1_250_000_000)
+
+        let liveActivityID = await MainActor.run {
+            context.notchViewModel.notchModel.liveActivityContent?.id
+        }
+        XCTAssertEqual(liveActivityID, NotchContentRegistry.Media.nowPlaying.id)
+    }
+
+    func testDownloadEventsShowAndHideLiveActivity() async {
+        let context = makeContext()
+
+        context.downloadMonitor.publish([
+            DownloadModel(
+                url: URL(fileURLWithPath: "/tmp/archive.zip"),
+                displayName: "archive.zip",
+                directoryName: "Downloads",
+                byteCount: 1_024_000,
+                estimatedTotalByteCount: 2_497_561,
+                progress: 0.41,
+                startedAt: .now.addingTimeInterval(-3),
+                lastUpdatedAt: .now,
+                isTemporaryFile: false,
+                bytesPerSecond: 1_536_000
+            )
+        ])
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.download.id }
+        }
+
+        context.downloadMonitor.publish([])
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.content == nil }
+        }
+    }
+
+    func testDragAndDropTrayModeShowsTrayLiveActivity() async {
+        let context = makeContext(dragAndDropActivityMode: .tray)
+
+        context.airDropViewModel.setDraggingFile(true)
+        context.coordinator.handleAirDropEvent(.dragStarted)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.DragAndDrop.tray.id
+            }
+        }
+    }
+
+    func testDragAndDropCombinedModeShowsCombinedLiveActivity() async {
+        let context = makeContext(dragAndDropActivityMode: .combined)
+
+        context.airDropViewModel.setDraggingFile(true)
+        context.coordinator.handleAirDropEvent(.dragStarted)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.DragAndDrop.combined.id
+            }
+        }
+    }
+
+    func testFileTrayItemsShowTrayActiveLiveActivity() async {
+        let context = makeContext(dragAndDropActivityMode: .tray)
+
+        withExtendedLifetime(context.coordinator) {
+            context.fileTrayViewModel.add([
+                URL(fileURLWithPath: "/tmp/NotchFlow-Tray-First.txt"),
+                URL(fileURLWithPath: "/tmp/NotchFlow-Tray-Folder", isDirectory: true)
+            ])
+        }
+
+        await assertEventually({
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.DragAndDrop.trayActive.id
+            }
+        }, message: "Expected tray active content, got \(String(describing: context.notchViewModel.notchModel.liveActivityContent?.id)); count: \(context.fileTrayViewModel.count); enabled: \(context.settingsViewModel.isLiveActivityEnabled(.drop))")
+
+        XCTAssertEqual(context.fileTrayViewModel.count, 2)
+
+        context.fileTrayViewModel.clear()
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent == nil
+            }
+        }
+    }
+
+    func testDisabledTrayLiveActivitySuppressesFileTrayItems() async {
+        let context = makeContext(
+            dragAndDropActivityMode: .tray,
+            trayLiveActivityEnabled: false
+        )
+
+        withExtendedLifetime(context.coordinator) {
+            context.fileTrayViewModel.add([
+                URL(fileURLWithPath: "/tmp/NotchFlow-Tray-Disabled.txt")
+            ])
+        }
+
+        XCTAssertEqual(context.fileTrayViewModel.count, 1)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent == nil
+            }
+        }
+    }
+
+    func testDisabledDragAndDropSuppressesLiveActivity() async {
+        let context = makeContext(dragAndDropEnabled: false)
+
+        context.airDropViewModel.setDraggingFile(true)
+        context.coordinator.handleAirDropEvent(.dragStarted)
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let liveActivityContent = await MainActor.run {
+            context.notchViewModel.notchModel.liveActivityContent
+        }
+        XCTAssertNil(liveActivityContent)
+    }
+
+    func testLockScreenEventsShowAndHideLockLiveActivity() async {
+        let context = makeContext()
+
+        context.lockScreenService.publish(isLocked: true)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.LockScreen.activity.id }
+        }
+
+        context.lockScreenService.publish(isLocked: false)
+
+        await assertEventually(timeout: 0.5) {
+            await MainActor.run { context.notchViewModel.notchModel.content == nil }
+        }
+    }
+
+    func testUnlockingRestoresNowPlayingAfterLockScreenActivityStops() async {
+        let context = makeContext()
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+
+        context.lockScreenService.publish(isLocked: true)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.LockScreen.activity.id }
+        }
+
+        context.lockScreenService.publish(isLocked: false)
+
+        await assertEventually(timeout: 0.5) {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+    }
+
+    func testLiveActivitiesSuppressedOnLockScreenExceptLockScreenActivityAndTemporaryNotification() async {
+        let context = makeContext(temporaryActivityDurationScale: 0.2)
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+
+        context.lockScreenService.publish(isLocked: true)
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.LockScreen.activity.id }
+        }
+
+        if NotchFeatures.isHardwareHUDEnabled {
+            context.coordinator.handleHudEvent(.volume(80))
+
+            await assertEventually {
+                await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.HUD.system.id }
+            }
+
+            await assertEventually(timeout: 1.5) {
+                await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.LockScreen.activity.id }
+            }
+        }
+
+        context.lockScreenService.publish(isLocked: false)
+
+        await assertEventually(timeout: 0.5) {
+            await MainActor.run { context.notchViewModel.displayedContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+    }
+
+    func testLockScreenShowsLiveActivityWhenActivityPresentationHiddenIsTrue() async {
+        let context = makeContext()
+        context.notchViewModel.setActivityPresentationHidden(true)
+
+        context.lockScreenService.publish(isLocked: true)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.isLocked &&
+                context.notchViewModel.displayedContent?.id == NotchContentRegistry.LockScreen.activity.id
+            }
+        }
+
+        context.lockScreenService.publish(isLocked: false)
+
+        await assertEventually(timeout: 0.5) {
+            await MainActor.run {
+                !context.notchViewModel.isLocked &&
+                context.notchViewModel.displayedContent == nil
+            }
+        }
+    }
+
+    func testSwipeDismissOnLockScreenDoesNotDismissContent() async {
+        let context = makeContext()
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+        context.coordinator.handleNowPlayingEvent(context.nowPlayingViewModel.event ?? .started)
+
+        context.lockScreenService.publish(isLocked: true)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.isLocked &&
+                context.notchViewModel.displayedContent?.id == NotchContentRegistry.LockScreen.activity.id &&
+                context.notchViewModel.canDismissWithTrackpadSwipe
+            }
+        }
+
+        await MainActor.run {
+            context.notchViewModel.dismissActiveContent()
+        }
+
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.displayedContent?.id == NotchContentRegistry.LockScreen.activity.id
+            }
+        }
+    }
+
+    func testCheckFirstLaunchSyncsActiveNowPlayingSessionWhenOnboardingIsAlreadyCompleted() async {
+        UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
+
+        let context = makeContext()
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+
+        context.coordinator.checkFirstLaunch()
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+    }
+
+    func testFinishingOnboardingRestoresNowPlayingWhenPlaybackIsActive() async {
+        let context = makeContext()
+
+        context.coordinator.handleOnboardingEvent(.onboarding)
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.liveActivityContent?.id == OnboardingSteps.first.liveActivityID
+            }
+        }
+
+        context.nowPlayingService.publish(makeNowPlayingSnapshot())
+
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        let activeContentID = await MainActor.run {
+            context.notchViewModel.notchModel.liveActivityContent?.id
+        }
+        XCTAssertEqual(activeContentID, OnboardingSteps.first.liveActivityID)
+
+        context.coordinator.finishOnboarding()
+
+        await assertEventually {
+            await MainActor.run { context.notchViewModel.notchModel.liveActivityContent?.id == NotchContentRegistry.Media.nowPlaying.id }
+        }
+    }
+
+    func testLanguageChangeShowsTemporaryNotification() async {
+        let context = makeContext()
+
+        await MainActor.run {
+            context.settingsViewModel.application.appLanguage = .vietnamese
+        }
+
+        await assertEventually {
+            await MainActor.run {
+                context.notchViewModel.notchModel.temporaryNotificationContent?.id == NotchContentRegistry.Settings.language.id
+            }
+        }
+    }
+}
+
+private extension NotchEventCoordinatorIntegrationTests {
+    struct TestContext {
+        let notchViewModel: NotchViewModel
+        let coordinator: NotchEventCoordinator
+        let downloadViewModel: DownloadViewModel
+        let downloadMonitor: FakeFileDownloadMonitor
+        let airDropViewModel: AirDropNotchViewModel
+        let fileTrayViewModel: FileTrayViewModel
+        let vpnViewModel: VpnViewModel
+        let settingsViewModel: SettingsViewModel
+        let nowPlayingViewModel: NowPlayingViewModel
+        let nowPlayingService: FakeNowPlayingService
+        let lockScreenManager: LockScreenManager
+        let lockScreenService: FakeLockScreenMonitoringService
+        let cancellables: Set<AnyCancellable>
+    }
+
+    func makeContext(
+        brightnessHUDEnabled: Bool = true,
+        keyboardHUDEnabled: Bool = true,
+        volumeHUDEnabled: Bool = true,
+        temporaryActivityDurationScale: Double = 1,
+        nowPlayingPauseHideTimerEnabled: Bool = true,
+        nowPlayingPauseHideDelay: Int = 5,
+        dragAndDropEnabled: Bool = true,
+        dragAndDropActivityMode: DragAndDropActivityMode = .airDrop,
+        trayLiveActivityEnabled: Bool = true,
+        mirrorLiveActivityEnabled: Bool = true,
+        noInternetTemporaryActivityEnabled: Bool = true,
+        focusOnAutoHideEnabled: Bool = true,
+        vpnLiveActivityEnabled: Bool = true,
+        proEnabled: Bool = true
+    ) -> TestContext {
+        UserDefaults.standard.set(false, forKey: "isLaunchAtLoginEnabled")
+        UserDefaults.standard.set(0, forKey: "notchWidth")
+        UserDefaults.standard.set(0, forKey: "notchHeight")
+        UserDefaults.standard.set(brightnessHUDEnabled, forKey: "settings.hud.brightness")
+        UserDefaults.standard.set(keyboardHUDEnabled, forKey: "settings.hud.keyboard")
+        UserDefaults.standard.set(volumeHUDEnabled, forKey: "settings.hud.volume")
+        UserDefaults.standard.set(HudStyle.compact.rawValue, forKey: "settings.hud.style")
+        UserDefaults.standard.set(temporaryActivityDurationScale, forKey: "settings.temporary.durationScale")
+        UserDefaults.standard.set(true, forKey: "settings.live.hotspot")
+        UserDefaults.standard.set(vpnLiveActivityEnabled, forKey: "settings.live.vpn")
+        UserDefaults.standard.set(true, forKey: "settings.live.focus")
+        UserDefaults.standard.set(focusOnAutoHideEnabled, forKey: "settings.live.focus.autoHide")
+        UserDefaults.standard.set(true, forKey: "settings.live.nowPlaying")
+        UserDefaults.standard.set(nowPlayingPauseHideTimerEnabled, forKey: "settings.nowPlaying.pauseHideTimerEnabled")
+        UserDefaults.standard.set(nowPlayingPauseHideDelay, forKey: "settings.nowPlaying.pauseHideDelay")
+        UserDefaults.standard.set(true, forKey: "settings.live.downloads")
+        UserDefaults.standard.set(dragAndDropEnabled, forKey: "settings.live.dragAndDrop")
+        UserDefaults.standard.set(dragAndDropActivityMode.rawValue, forKey: "settings.live.dragAndDrop.mode")
+        UserDefaults.standard.set(trayLiveActivityEnabled, forKey: "settings.live.tray")
+        UserDefaults.standard.set(mirrorLiveActivityEnabled, forKey: "settings.live.mirror")
+        UserDefaults.standard.set(true, forKey: LockScreenSettings.liveActivityKey)
+        UserDefaults.standard.set(true, forKey: LockScreenSettings.mediaPanelKey)
+        UserDefaults.standard.set(true, forKey: "settings.temporary.charger")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.lowPower")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.fullPower")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.bluetooth")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.wifi")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.vpn")
+        UserDefaults.standard.set(noInternetTemporaryActivityEnabled, forKey: "settings.temporary.noInternet")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.focusOff")
+        UserDefaults.standard.set(true, forKey: "settings.temporary.notchSize")
+
+        let settingsViewModel = SettingsViewModel()
+        let notchViewModel = NotchViewModel(
+            settings: settingsViewModel.application,
+            hideDelay: 0.01,
+            queueDelay: 0
+        )
+        let wifiViewModel = WifiViewModel(monitor: FakeWifiMonitor(), settings: settingsViewModel.connectivity)
+        let vpnViewModel = VpnViewModel(monitor: FakeWifiMonitor(), settings: settingsViewModel.connectivity)
+        let downloadMonitor = FakeFileDownloadMonitor()
+        let downloadViewModel = DownloadViewModel(monitor: downloadMonitor)
+        let nowPlayingService = FakeNowPlayingService()
+        let lockScreenService = FakeLockScreenMonitoringService()
+        let nowPlayingViewModel = NowPlayingViewModel(service: nowPlayingService)
+        let airDropViewModel = AirDropNotchViewModel()
+        let fileTrayViewModel = FileTrayViewModel()
+        let timerViewModel = TimerViewModel(monitor: InactiveClockTimerMonitor())
+        let lockScreenManager = LockScreenManager(
+            service: lockScreenService,
+            unlockCollapseDelay: 0.05,
+            idleResetDelay: 0.05
+        )
+        TestLifetime.retain(downloadViewModel)
+        TestLifetime.retain(nowPlayingViewModel)
+        TestLifetime.retain(lockScreenManager)
+        downloadViewModel.startMonitoring()
+        nowPlayingViewModel.startMonitoring()
+        lockScreenManager.startMonitoring()
+        let screenRecordingViewModel = ScreenRecordingViewModel(monitor: FakeScreenRecordingMonitor())
+        let localTimerViewModel = LocalTimerViewModel()
+        let calendarViewModel = CalendarViewModel()
+        let coordinator = NotchEventCoordinator(
+            notchViewModel: notchViewModel,
+            bluetoothViewModel: BluetoothViewModel(bluetoothService: InactiveBluetoothService()),
+            powerService: PowerService(startMonitoring: false),
+            wifiViewModel: wifiViewModel,
+            vpnViewModel: vpnViewModel,
+            downloadViewModel: downloadViewModel,
+            airDropViewModel: airDropViewModel,
+            fileTrayViewModel: fileTrayViewModel,
+            settingsViewModel: settingsViewModel,
+            nowPlayingViewModel: nowPlayingViewModel,
+            timerViewModel: timerViewModel,
+            screenRecordingViewModel: screenRecordingViewModel,
+            lockScreenManager: lockScreenManager,
+            localTimerViewModel: localTimerViewModel,
+            calendarViewModel: calendarViewModel,
+            externalDrivesMonitor: ExternalDrivesMonitor(),
+            hasProAccess: { proEnabled }
+        )
+        let cancellables = Set<AnyCancellable>()
+
+        return TestContext(
+            notchViewModel: notchViewModel,
+            coordinator: coordinator,
+            downloadViewModel: downloadViewModel,
+            downloadMonitor: downloadMonitor,
+            airDropViewModel: airDropViewModel,
+            fileTrayViewModel: fileTrayViewModel,
+            vpnViewModel: vpnViewModel,
+            settingsViewModel: settingsViewModel,
+            nowPlayingViewModel: nowPlayingViewModel,
+            nowPlayingService: nowPlayingService,
+            lockScreenManager: lockScreenManager,
+            lockScreenService: lockScreenService,
+            cancellables: cancellables
+        )
+    }
+}

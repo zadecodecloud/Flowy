@@ -1,0 +1,57 @@
+//
+//  AirDropActiveNotchContent.swift
+//  NotchFlow
+//
+
+import SwiftUI
+
+struct AirDropActiveNotchContent: NotchContentProtocol, DynamicIslandCustomizable {
+    let id = NotchContentRegistry.DragAndDrop.airDropTransferActive.id
+    let airDropViewModel: AirDropNotchViewModel
+    let mediaSettings: MediaAndFilesSettingsStore
+
+    var priority: Int { NotchContentRegistry.DragAndDrop.airDropTransferActive.priority }
+    var isExpandable: Bool { true }
+
+    var strokeColor: Color {
+        Color.blue.opacity(0.3)
+    }
+
+    func compactSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 70, height: baseHeight)
+    }
+    
+    func dynamicIslandSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 65, height: baseHeight)
+    }
+
+    func expandedSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
+        return .init(width: baseWidth + 120, height: baseHeight + 70)
+    }
+
+    func expandedCornerRadius(baseRadius: CGFloat) -> (top: CGFloat, bottom: CGFloat) {
+        NotchPageMetrics.cornerRadius
+    }
+
+    func expandedDynamicIslandCornerRadius(baseHeight: CGFloat) -> CGFloat {
+        baseHeight * 0.3
+    }
+
+    @MainActor
+    func compactView() -> AnyView {
+        AnyView(
+            AirDropActiveNotchView(
+                airDropViewModel: airDropViewModel
+            )
+        )
+    }
+
+    @MainActor
+    func expandedView() -> AnyView {
+        AnyView(
+            AirDropExpandedActiveNotchView(
+                airDropViewModel: airDropViewModel
+            )
+        )
+    }
+}
