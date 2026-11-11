@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="300" viewBox="0 0 560 300" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2d5f"/><stop offset="1" stop-color="#24456b"/></linearGradient>
+    <clipPath id="r"><rect width="560" height="300" rx="22"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="560" height="300" fill="url(#bg)"/>
+    <circle cx="460" cy="250" r="160" fill="#fff" opacity=".05"/>
+    <circle cx="80" cy="40" r="120" fill="#fff" opacity=".04"/>
+    
+    <g>
+      <path fill="#000" d="M100.0 0 H460.0 V50 Q460.0 72 438.0 72 H122.0 Q100.0 72 100.0 50 Z">
+        <animate attributeName="d" dur="5s" repeatCount="indefinite" keyTimes="0;.6;.7;.85;.95;1" calcMode="spline"
+          keySplines=".4 0 .2 1;.4 0 .2 1;0 0 1 1;.4 0 .2 1;0 0 1 1"
+          values="M100.0 0 H460.0 V50 Q460.0 72 438.0 72 H122.0 Q100.0 72 100.0 50 Z;M100.0 0 H460.0 V50 Q460.0 72 438.0 72 H122.0 Q100.0 72 100.0 50 Z;M205.0 0 H355.0 V15.0 Q355.0 30 340.0 30 H220.0 Q205.0 30 205.0 15.0 Z;M205.0 0 H355.0 V15.0 Q355.0 30 340.0 30 H220.0 Q205.0 30 205.0 15.0 Z;M100.0 0 H460.0 V50 Q460.0 72 438.0 72 H122.0 Q100.0 72 100.0 50 Z;M100.0 0 H460.0 V50 Q460.0 72 438.0 72 H122.0 Q100.0 72 100.0 50 Z"/>
+      </path>
+      <g opacity="1">
+        <animate attributeName="opacity" dur="5s" repeatCount="indefinite" keyTimes="0;.58;.63;.9;.97;1" values="1;1;0;0;1;1"/>
+        
+  <rect x="122.0" y="20" width="4" height="34" rx="2" fill="#0a84ff"/>
+  <text x="138.0" y="36" fill="#fff" font-size="15" font-weight="600">Design review</text>
+  <text x="138.0" y="54" fill="#fff" fill-opacity=".6" font-size="12">10:30 · in 15 min</text>
+  <text x="436.0" y="44" text-anchor="end" fill="#fff" font-size="13" font-weight="600">10:30</text>
+      </g>
+    </g>
+    <text x="28" y="252" fill="#fff" font-size="22" font-weight="700">Never miss a meeting</text>
+    <text x="28" y="278" fill="#fff" fill-opacity=".72" font-size="14">Upcoming events and timers, right where you look.</text>
+  </g>
+</svg>

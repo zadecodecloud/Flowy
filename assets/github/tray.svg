@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="300" viewBox="0 0 560 300" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16404a"/><stop offset="1" stop-color="#2c3f6b"/></linearGradient>
+    <clipPath id="r"><rect width="560" height="300" rx="22"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="560" height="300" fill="url(#bg)"/>
+    <circle cx="460" cy="250" r="160" fill="#fff" opacity=".05"/>
+    <circle cx="80" cy="40" r="120" fill="#fff" opacity=".04"/>
+    
+    <g>
+      <path fill="#000" d="M100.0 0 H460.0 V88 Q460.0 110 438.0 110 H122.0 Q100.0 110 100.0 88 Z">
+        <animate attributeName="d" dur="5s" repeatCount="indefinite" keyTimes="0;.6;.7;.85;.95;1" calcMode="spline"
+          keySplines=".4 0 .2 1;.4 0 .2 1;0 0 1 1;.4 0 .2 1;0 0 1 1"
+          values="M100.0 0 H460.0 V88 Q460.0 110 438.0 110 H122.0 Q100.0 110 100.0 88 Z;M100.0 0 H460.0 V88 Q460.0 110 438.0 110 H122.0 Q100.0 110 100.0 88 Z;M205.0 0 H355.0 V15.0 Q355.0 30 340.0 30 H220.0 Q205.0 30 205.0 15.0 Z;M205.0 0 H355.0 V15.0 Q355.0 30 340.0 30 H220.0 Q205.0 30 205.0 15.0 Z;M100.0 0 H460.0 V88 Q460.0 110 438.0 110 H122.0 Q100.0 110 100.0 88 Z;M100.0 0 H460.0 V88 Q460.0 110 438.0 110 H122.0 Q100.0 110 100.0 88 Z"/>
+      </path>
+      <g opacity="1">
+        <animate attributeName="opacity" dur="5s" repeatCount="indefinite" keyTimes="0;.58;.63;.9;.97;1" values="1;1;0;0;1;1"/>
+        <g transform="translate(124.0,24)"><rect width="66" height="56" rx="10" fill="#fff" fill-opacity=".1"/>
+  <path transform="translate(23,10)" fill="#5ac8fa" d="M0 0 H13 L20 7 V26 H0 Z"/><text x="33" y="50" text-anchor="middle" fill="#fff" fill-opacity=".7" font-size="10">Notes.pdf</text></g><g transform="translate(208.0,24)"><rect width="66" height="56" rx="10" fill="#fff" fill-opacity=".1"/>
+  <path transform="translate(23,10)" fill="#ffcc00" d="M0 0 H13 L20 7 V26 H0 Z"/><text x="33" y="50" text-anchor="middle" fill="#fff" fill-opacity=".7" font-size="10">Plan.key</text></g><g transform="translate(292.0,24)"><rect width="66" height="56" rx="10" fill="#fff" fill-opacity=".1"/>
+  <path transform="translate(23,10)" fill="#34c759" d="M0 0 H13 L20 7 V26 H0 Z"/><text x="33" y="50" text-anchor="middle" fill="#fff" fill-opacity=".7" font-size="10">Data.csv</text></g><g transform="translate(376.0,24)"><rect width="66" height="56" rx="10" fill="#fff" fill-opacity=".1"/>
+  <path transform="translate(23,10)" fill="#ff9f0a" d="M0 0 H13 L20 7 V26 H0 Z"/><text x="33" y="50" text-anchor="middle" fill="#fff" fill-opacity=".7" font-size="10">Photo.jpg</text></g><text x="280.0" y="98" text-anchor="middle" fill="#fff" fill-opacity=".5" font-size="11">4 files · drag out to use</text>
+      </g>
+    </g>
+    <text x="28" y="252" fill="#fff" font-size="22" font-weight="700">Drop files on the notch</text>
+    <text x="28" y="278" fill="#fff" fill-opacity=".72" font-size="14">Keep files handy and AirDrop them in one move. (Pro)</text>
+  </g>
+</svg>

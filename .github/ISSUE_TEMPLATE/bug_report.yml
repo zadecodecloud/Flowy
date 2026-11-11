@@ -1,0 +1,36 @@
+name: Bug report
+description: Something in Flowy isn't working
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Flowy version
+      description: Menu bar icon › the version line at the top
+      placeholder: "1.0 (26)"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: "macOS 26.1, MacBook Pro 14-inch M3"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Music, HUD, File Tray, Lock screen, Devices & status, Calendar / timer, Settings, License / Pro, Updates, Other]
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or screen recording
+      description: Never paste your license key here.
