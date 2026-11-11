@@ -15,6 +15,7 @@ struct NowPlayingExpandedNotchView: View {
     @ObservedObject var nowPlayingViewModel: NowPlayingViewModel
     @ObservedObject var settings: MediaAndFilesSettingsStore
     @ObservedObject var applicationSettings: ApplicationSettingsStore
+    @ObservedObject private var badges = TrackBadgeProvider.shared
     
     let onOpenPlaybackSource: @MainActor () -> Void
     
@@ -39,6 +40,11 @@ struct NowPlayingExpandedNotchView: View {
 
         return TimelineView(.periodic(from: .now, by: progressTick(for: snapshot))) { context in
             timelineContent(snapshot: snapshot, at: context.date)
+        }
+        .task(id: "\(snapshot.title)|\(snapshot.artist)|\(snapshot.album)|\(settings.nowPlayingTrackBadge.rawValue)") {
+            badges.update(title: snapshot.title, artist: snapshot.artist, album: snapshot.album,
+                          bundleIdentifier: snapshot.playbackSource?.bundleIdentifier,
+                          badge: settings.nowPlayingTrackBadge)
         }
         .onAppear {
             nowPlayingViewModel.setDetailedPresentationActive(
@@ -85,6 +91,9 @@ struct NowPlayingExpandedNotchView: View {
                 }
             )
             controlsSection(snapshot: snapshot, appearance: appearance)
+            if appearance.showsVolumeControl {
+                volumeControl(snapshot)
+            }
         }
         .notchPagePadding(isNotchless: isNotchlessScreen, topCornerRadius: 34)
     }
@@ -120,7 +129,7 @@ struct NowPlayingExpandedNotchView: View {
                                 textColor: .white,
                                 backgroundColor: .clear,
                                 minDuration: 2.0,
-                                frameWidth: max(1, geometry.size.width - 33)
+                                frameWidth: max(1, geometry.size.width - 33 - badgeWidth(appearance.trackBadge))
                             )
 
                             MarqueeText(
@@ -130,13 +139,15 @@ struct NowPlayingExpandedNotchView: View {
                                 textColor: .white.opacity(0.68),
                                 backgroundColor: .clear,
                                 minDuration: 3.0,
-                                frameWidth: max(1, geometry.size.width - 33)
+                                frameWidth: max(1, geometry.size.width - 33 - badgeWidth(appearance.trackBadge))
                             )
                         }
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(PlaybackSourceButtonStyle())
                     .disabled(!nowPlayingViewModel.canOpenPlaybackSource)
+
+                    trackBadge(appearance.trackBadge)
 
                     LightweightNowPlayingEqualizerView(
                         isPlaying: snapshot.isPlaying,
@@ -167,6 +178,58 @@ struct NowPlayingExpandedNotchView: View {
                 AudioOutputRoutePickerButton(nowPlayingViewModel: nowPlayingViewModel, width: 38, height: 38, fontSize: 18)
             } else { Color.clear }
         }
+    }
+
+    /// Room taken by the badge (plus spacing) so the marquee titles don't run under it.
+    private func badgeWidth(_ badge: NowPlayingTrackBadge) -> CGFloat {
+        switch badge {
+        case .explicit: return badges.isExplicit ? 25 : 0
+        case .format: return badges.audioFormat == nil ? 0 : 58
+        case .none: return 0
+        }
+    }
+
+    @ViewBuilder
+    private func trackBadge(_ badge: NowPlayingTrackBadge) -> some View {
+        switch badge {
+        case .explicit where badges.isExplicit:
+            Text(verbatim: "E")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundStyle(.black)
+                .frame(width: 15, height: 15)
+                .background(RoundedRectangle(cornerRadius: 3).fill(.white.opacity(0.75)))
+                .accessibilityLabel(Text(verbatim: locale.language.languageCode?.identifier == "vi" ? "Nội dung nhạy cảm" : "Explicit"))
+        case .format:
+            if let format = badges.audioFormat {
+                Text(verbatim: format.shortLabel)
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.8))
+                    .padding(.horizontal, 5)
+                    .frame(height: 15)
+                    .overlay(RoundedRectangle(cornerRadius: 3).strokeBorder(.white.opacity(0.5)))
+                    .fixedSize()
+                    .help(Text(verbatim: format.label))
+                    .accessibilityLabel(Text(verbatim: format.label))
+            }
+        default:
+            EmptyView()
+        }
+    }
+
+    private func volumeControl(_ snapshot: NowPlayingSnapshot) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "speaker.fill")
+            Slider(value: Binding(get: { snapshot.volume ?? 0 }, set: { nowPlayingViewModel.setVolume($0) }), in: 0...1)
+                .controlSize(.mini)
+                .tint(.white)
+                .disabled(!snapshot.supportsVolumeControl || snapshot.volume == nil)
+                .accessibilityLabel(Text(verbatim: locale.language.languageCode?.identifier == "vi" ? "Âm lượng" : "Volume"))
+                .accessibilityIdentifier("nowPlaying.volume")
+            Image(systemName: "speaker.wave.3.fill")
+        }
+        .font(.system(size: 11))
+        .foregroundStyle(.white.opacity(0.6))
+        .padding(.horizontal, 4)
     }
 
     private func displayTitle(for snapshot: NowPlayingSnapshot) -> String {

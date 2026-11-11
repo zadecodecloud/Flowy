@@ -68,10 +68,62 @@ struct NowPlayingSettingsView: View {
                         .init(id: "favorite", label: t("Yêu thích", "Favorite"),
                               isOn: $settings.isNowPlayingFavoriteButtonVisible),
                         .init(id: "outputDevice", label: t("Thiết bị phát", "Output device"),
-                              isOn: $settings.isNowPlayingOutputDeviceButtonVisible)
+                              isOn: $settings.isNowPlayingOutputDeviceButtonVisible),
+                        .init(id: "volumeControl", label: t("Hiện thanh âm lượng", "Show volume control"),
+                              note: t("Dưới các nút phát", "Under the playback buttons"),
+                              isOn: $settings.isNowPlayingVolumeControlVisible)
                     ])
                 }
             }
+
+            V2Tile(title: t("Nhãn bài hát", "Track badge"),
+                   hint: badgeHint) {
+                HStack(spacing: 12) {
+                    ForEach(NowPlayingTrackBadge.allCases, id: \.self) { badge in
+                        V2OptionCard(title: badgeName(badge),
+                                     isSelected: settings.nowPlayingTrackBadge == badge,
+                                     action: { settings.nowPlayingTrackBadge = badge }) {
+                            badgeVisual(badge)
+                        }
+                    }
+                }
+                .accessibilityIdentifier("settings.nowPlaying.trackBadge")
+            }
+        }
+    }
+}
+
+private extension NowPlayingSettingsView {
+    var badgeHint: String {
+        switch settings.nowPlayingTrackBadge {
+        case .none: return t("Không hiện nhãn cạnh tên bài.", "Nothing next to the track title.")
+        case .explicit: return t("Hiện chữ E với bài có nội dung nhạy cảm. Tên bài và nghệ sĩ được tra trong kho nhạc Apple.",
+                                 "Shows an E on explicit tracks. The title and artist are looked up in Apple's music catalog.")
+        case .format: return t("Hiện Lossless / Hi-Res cho bài trên Apple Music. macOS sẽ hỏi một lần để Flowy đọc bài đang phát trong Nhạc.",
+                               "Shows Lossless / Hi-Res for Apple Music tracks. macOS asks once to let Flowy read the current track in Music.")
+        }
+    }
+
+    func badgeName(_ badge: NowPlayingTrackBadge) -> String {
+        switch badge {
+        case .none: return t("Không", "None")
+        case .explicit: return t("Nhạy cảm", "Explicit")
+        case .format: return t("Định dạng", "Format")
+        }
+    }
+
+    @ViewBuilder
+    func badgeVisual(_ badge: NowPlayingTrackBadge) -> some View {
+        switch badge {
+        case .none:
+            Image(systemName: "nosign").font(.system(size: 20)).foregroundStyle(.secondary)
+        case .explicit:
+            Text(verbatim: "E").font(.system(size: 13, weight: .bold)).foregroundStyle(.black)
+                .frame(width: 22, height: 22).background(RoundedRectangle(cornerRadius: 4).fill(.white.opacity(0.8)))
+        case .format:
+            Text(verbatim: "Lossless").font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(0.85))
+                .padding(.horizontal, 6).frame(height: 20)
+                .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(.white.opacity(0.6)))
         }
     }
 }

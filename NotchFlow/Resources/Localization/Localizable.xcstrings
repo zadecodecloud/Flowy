@@ -669,7 +669,7 @@
         }
       }
     },
-    "Face authentication and automatic login are unavailable in NotchFlow." : {
+    "Face authentication and automatic login are unavailable in Flowy." : {
 
     },
     "Face ID" : {
@@ -1233,10 +1233,10 @@
         }
       }
     },
-    "File Tray cần NotchFlow Pro. Các tệp đã lưu vẫn được giữ lại." : {
+    "File Tray cần Flowy Pro. Các tệp đã lưu vẫn được giữ lại." : {
 
     },
-    "File Tray requires NotchFlow Pro. Existing files are retained." : {
+    "File Tray requires Flowy Pro. Existing files are retained." : {
 
     },
     "Finish an active drag with the dropped event." : {

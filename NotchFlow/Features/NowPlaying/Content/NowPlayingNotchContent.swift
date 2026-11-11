@@ -47,11 +47,16 @@ struct NowPlayingNotchContent: NotchContentProtocol, DynamicIslandCustomizable {
     }
     
     func expandedSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
-        .init(width: baseWidth + 190, height: baseHeight + 160)
+        .init(width: baseWidth + 190, height: baseHeight + 160 + volumeRowHeight)
     }
     
     func expandedDynamicIslandSize(baseWidth: CGFloat, baseHeight: CGFloat) -> CGSize {
-        .init(width: baseWidth + 260, height: baseHeight + 150)
+        .init(width: baseWidth + 260, height: baseHeight + 150 + volumeRowHeight)
+    }
+
+    /// Extra room for the optional volume slider under the controls.
+    private var volumeRowHeight: CGFloat {
+        settings.isNowPlayingVolumeControlVisible ? 26 : 0
     }
     
     func expandedCornerRadius(baseRadius: CGFloat) -> (top: CGFloat, bottom: CGFloat) {

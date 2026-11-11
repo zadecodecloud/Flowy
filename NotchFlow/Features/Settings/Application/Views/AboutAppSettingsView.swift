@@ -87,8 +87,8 @@ struct AboutAppSettingsView: View {
 
     private var legalNotice: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(verbatim: t("Flowy là phần mềm tự do theo giấy phép GNU GPL v3, không kèm bất kỳ bảo hành nào. Có dùng mã từ DynamicNotch, Lottie, Sparkle và MediaRemoteAdapter.",
-                             "Flowy is free software under the GNU GPL v3 and comes with no warranty. It includes code from DynamicNotch, Lottie, Sparkle and MediaRemoteAdapter."))
+            Text(verbatim: t("Flowy là phần mềm tự do theo giấy phép GNU GPL v3.",
+                             "Flowy is free software under the GNU GPL v3."))
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 12) {
                 Link(t("Giấy phép", "License"), destination: Self.licenseURL)
@@ -97,7 +97,7 @@ struct AboutAppSettingsView: View {
                 }
             }
         }
-        .font(.system(size: 11))
+        .font(.system(size: 7))
         .foregroundStyle(.tertiary)
         .padding(.horizontal, 4)
         .accessibilityIdentifier("settings.about.legal")

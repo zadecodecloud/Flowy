@@ -59,6 +59,8 @@ enum GeneralSettingsStorage {
         static let nowPlayingPauseHideTimerEnabled = "settings.nowPlaying.pauseHideTimerEnabled"
         static let nowPlayingPauseHideDelay = "settings.nowPlaying.pauseHideDelay"
         static let nowPlayingSourceFilter = "settings.nowPlaying.sourceFilter"
+        static let nowPlayingTrackBadge = "settings.nowPlaying.trackBadge"
+        static let nowPlayingVolumeControlVisible = "settings.nowPlaying.volumeControlVisible"
         static let downloadsLiveActivityEnabled = "settings.live.downloads"
         static let downloadsProgressIndicatorStyle = "settings.live.downloads.progressIndicatorStyle"
         static let dragAndDropLiveActivityEnabled = "settings.live.dragAndDrop"
@@ -190,6 +192,8 @@ enum GeneralSettingsStorage {
         Keys.nowPlayingPauseHideTimerEnabled: true,
         Keys.nowPlayingPauseHideDelay: 5,
         Keys.nowPlayingSourceFilter: NowPlayingSourceFilter.any.rawValue,
+        Keys.nowPlayingTrackBadge: NowPlayingTrackBadge.none.rawValue,
+        Keys.nowPlayingVolumeControlVisible: false,
         Keys.downloadsLiveActivityEnabled: true,
         Keys.downloadsProgressIndicatorStyle: DownloadProgressIndicatorStyle.percent.rawValue,
         Keys.dragAndDropLiveActivityEnabled: true,

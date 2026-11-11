@@ -34,6 +34,12 @@ final class MediaAndFilesSettingsStore: SettingsStoreBase {
     @StoredDefault(key: GeneralSettingsStorage.Keys.nowPlayingSourceFilter, defaultValue: .any)
     var nowPlayingSourceFilter: NowPlayingSourceFilter
 
+    @StoredDefault(key: GeneralSettingsStorage.Keys.nowPlayingTrackBadge, defaultValue: .none)
+    var nowPlayingTrackBadge: NowPlayingTrackBadge
+
+    @StoredDefault(key: GeneralSettingsStorage.Keys.nowPlayingVolumeControlVisible, defaultValue: false)
+    var isNowPlayingVolumeControlVisible: Bool
+
     @StoredDefault(key: GeneralSettingsStorage.Keys.downloadsLiveActivityEnabled, defaultValue: true)
     var isDownloadsLiveActivityEnabled: Bool
 
@@ -94,6 +100,8 @@ final class MediaAndFilesSettingsStore: SettingsStoreBase {
         isNowPlayingPauseHideTimerEnabled = defaultBool(for: GeneralSettingsStorage.Keys.nowPlayingPauseHideTimerEnabled)
         nowPlayingPauseHideDelay = defaultInt(for: GeneralSettingsStorage.Keys.nowPlayingPauseHideDelay)
         nowPlayingSourceFilter = .any
+        nowPlayingTrackBadge = .none
+        isNowPlayingVolumeControlVisible = false
     }
 
     func resetDownloads() {
@@ -133,6 +141,8 @@ struct NowPlayingAppearanceOptions {
     let showsFavoriteButton: Bool
     let showsOutputDeviceButton: Bool
     let usesArtwork3DEffect: Bool
+    var trackBadge: NowPlayingTrackBadge = .none
+    var showsVolumeControl = false
 }
 
 extension MediaAndFilesSettingsStore {
@@ -140,7 +150,9 @@ extension MediaAndFilesSettingsStore {
         .init(
             showsFavoriteButton: isNowPlayingFavoriteButtonVisible,
             showsOutputDeviceButton: isNowPlayingOutputDeviceButtonVisible,
-            usesArtwork3DEffect: isNowPlayingArtwork3DEffectEnabled
+            usesArtwork3DEffect: isNowPlayingArtwork3DEffectEnabled,
+            trackBadge: nowPlayingTrackBadge,
+            showsVolumeControl: isNowPlayingVolumeControlVisible
         )
     }
 }
