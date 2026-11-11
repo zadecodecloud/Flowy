@@ -36,11 +36,11 @@
 	<key>NotchFlowLicensePublicKey</key>
 	<string>$(NOTCHFLOW_LICENSE_PUBLIC_KEY)</string>
 	<key>NotchFlowSourceURL</key>
-	<string>https://github.com/zadeoncloud/flowy</string>
+	<string>https://github.com/zadecodecloud/Flowy</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/zadeoncloud/flowy/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/zadecodecloud/Flowy/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>HYVsn3Vu/qWRd17YiLVCHLcjW2zlofGRA6sUMVVcKNA=</string>
 </dict>

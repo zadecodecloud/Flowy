@@ -9,7 +9,7 @@
 
 **Music, a smarter HUD, a file tray and your devices — living in the notch.**
 
-[![Download](https://img.shields.io/github/v/release/zadeoncloud/flowy?label=Download&style=for-the-badge&color=7d5cff)](https://github.com/zadeoncloud/flowy/releases/latest)
+[![Download](https://img.shields.io/github/v/release/zadecodecloud/Flowy?label=Download&style=for-the-badge&color=7d5cff)](https://github.com/zadecodecloud/Flowy/releases/latest)
 &nbsp;
 [![Get Pro](https://img.shields.io/badge/Flowy_Pro-%E2%82%AC6.99_lifetime-30d158?style=for-the-badge)](https://flowdy.lemonsqueezy.com/checkout/buy/dafdf3bb-75cb-46fd-9f70-fbd451c7194f)
 
@@ -20,6 +20,21 @@
 </div>
 
 ---
+
+## See it in action
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="assets/github/screens/notch-compact.png" alt="Flowy's compact notch showing the album artwork and a live equalizer">
+      <br><sub><b>At a glance</b> — the notch shows what's playing while you work.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="assets/github/screens/notch-player.png" alt="Flowy's expanded music player in the notch with artwork, progress bar and playback controls">
+      <br><sub><b>Open the notch</b> — the full player, right under the camera.</sub>
+    </td>
+  </tr>
+</table>
 
 ## Features
 
@@ -65,7 +80,7 @@
 
 ## Install
 
-1. Download **`Flowy-<version>.dmg`** from [Releases](https://github.com/zadeoncloud/flowy/releases/latest).
+1. Download **`Flowy-<version>.dmg`** from [Releases](https://github.com/zadecodecloud/Flowy/releases/latest).
 2. Drag **Flowy** to **Applications** and open it.
 3. The first time, macOS asks you to confirm an app from the internet: open **System Settings › Privacy & Security** and click **Open Anyway**. You only do this once — updates install themselves.
 
@@ -107,8 +122,8 @@ Only the ones for the features you turn on: Accessibility for the HUD, Bluetooth
 ## Build from source
 
 ```bash
-git clone https://github.com/zadeoncloud/flowy.git
-cd flowy
+git clone https://github.com/zadecodecloud/Flowy.git
+cd Flowy
 open NotchFlow.xcodeproj   # scheme: NotchFlow
 ```
 

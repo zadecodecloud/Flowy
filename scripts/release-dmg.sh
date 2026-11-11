@@ -4,7 +4,7 @@
 #   scripts/release-dmg.sh                 # signs with the "Apple Development" identity (stable permissions)
 #   SIGN_IDENTITY=- scripts/release-dmg.sh # ad-hoc signature instead
 #
-#   UPDATE_DOWNLOAD_BASE=… scripts/release-dmg.sh   (defaults to the zadeoncloud/flowy GitHub releases)
+#   UPDATE_DOWNLOAD_BASE=… scripts/release-dmg.sh   (defaults to the zadecodecloud/Flowy GitHub releases)
 #       also adds the release to build/updates/appcast.xml, signed with the Sparkle key in your Keychain.
 #
 # Output: build/release/Flowy-<version>.dmg and a .sha256 file next to it.
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-UPDATE_DOWNLOAD_BASE="${UPDATE_DOWNLOAD_BASE:-https://github.com/zadeoncloud/flowy/releases/download}"
+UPDATE_DOWNLOAD_BASE="${UPDATE_DOWNLOAD_BASE:-https://github.com/zadecodecloud/Flowy/releases/download}"
 SIGN_IDENTITY="${SIGN_IDENTITY:-Apple Development}"
 TEAM_ID="${TEAM_ID:-WP4578MNNL}"
 DERIVED="$ROOT/build/ReleaseDerivedData"
