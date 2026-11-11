@@ -19,7 +19,7 @@ final class LockScreenPreviewController {
         settings.lockScreen.isLockScreenLyricsEnabled = !ProcessInfo.processInfo.arguments.contains("-preview-no-lyrics")
         settings.lockScreen.isLockScreenArtworkExpanded = false
         settings.application.notchLanguage = .english
-        let snapshot = NowPlayingSnapshot(title: "Blue Hour", artist: "NotchFlow Sessions", album: "Afterglow",
+        let snapshot = NowPlayingSnapshot(title: "Blue Hour", artist: "Flowy Sessions", album: "Afterglow",
                                           duration: 240, elapsedTime: 24, playbackRate: 1,
                                           artworkData: Self.sampleArtwork(), volume: 0.55, supportsVolumeControl: true, refreshedAt: .now)
         fixtureSnapshot = snapshot
@@ -96,7 +96,7 @@ private final class PreviewNowPlayingService: NowPlayingMonitoring {
         case .setVolume(let volume): snapshot = snapshot.settingVolume(volume)
         case .nextTrack, .previousTrack:
             snapshot = NowPlayingSnapshot(title: command == .nextTrack ? "Afterglow" : "Blue Hour",
-                artist: "NotchFlow Sessions", album: "Afterglow", duration: 240, elapsedTime: 24,
+                artist: "Flowy Sessions", album: "Afterglow", duration: 240, elapsedTime: 24,
                 playbackRate: 1, artworkData: snapshot.artworkData,
                 isShuffled: snapshot.isShuffled, repeatMode: snapshot.repeatMode,
                 volume: snapshot.volume, supportsVolumeControl: true, refreshedAt: .now)

@@ -88,7 +88,7 @@ struct SettingsV2Sidebar: View {
                 .frame(width: 34, height: 34)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                Text(verbatim: "NotchFlow").font(.system(size: 14, weight: .semibold))
+                Text(verbatim: "Flowy").font(.system(size: 14, weight: .semibold))
                 Text(verbatim: "\(isPro ? "Pro" : localized("settings.account.free", "Free Version")) · \(Self.version)")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)

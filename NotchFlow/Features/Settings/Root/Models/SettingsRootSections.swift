@@ -227,7 +227,7 @@ private enum SettingsSectionCatalog {
                 titleKey: "settings.section.permissions.title",
                 fallbackTitle: "Permissions",
                 subtitleKey: "settings.section.permissions.subtitle",
-                fallbackSubtitle: "Manage system access for NotchFlow features.",
+                fallbackSubtitle: "Manage system access for Flowy features.",
                 systemImage: "checkmark.seal.fill",
                 imageName: nil,
                 tint: .green.opacity(0.9),

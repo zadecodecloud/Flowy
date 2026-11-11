@@ -115,7 +115,11 @@ final class SystemMediaKeyTap {
             return true
         }
 
-        requestAccessibilityPermissionIfNeeded()
+        // Never prompt from here: Flowy explains Accessibility first (PermissionPrimerPresenter),
+        // then macOS asks. Until it's granted, don't create the tap; HardwareHUDMonitor retries.
+        guard currentAccessibilityTrustState() else {
+            return false
+        }
 
         guard let systemDefinedEvent else {
             NSLog("Failed to resolve the system-defined CGEvent type.")

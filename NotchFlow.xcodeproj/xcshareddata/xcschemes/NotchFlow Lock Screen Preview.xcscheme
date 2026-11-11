@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
-               BuildableName = "NotchFlow.app"
+               BuildableName = "Flowy.app"
                BlueprintName = "NotchFlow"
                ReferencedContainer = "container:NotchFlow.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
-            BuildableName = "NotchFlow.app"
+            BuildableName = "Flowy.app"
             BlueprintName = "NotchFlow"
             ReferencedContainer = "container:NotchFlow.xcodeproj">
          </BuildableReference>
@@ -84,7 +84,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E2EF78502EDDB60E00F96D1E"
-            BuildableName = "NotchFlow.app"
+            BuildableName = "Flowy.app"
             BlueprintName = "NotchFlow"
             ReferencedContainer = "container:NotchFlow.xcodeproj">
          </BuildableReference>

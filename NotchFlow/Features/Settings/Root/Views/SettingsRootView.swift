@@ -189,6 +189,13 @@ struct SettingsRootView: View {
             applySelection(viewModel.initialSelection(), origin: .initial)
             updateWindowStyle()
         }
+        .onChange(of: licenses.pendingOpenLicensePage, initial: true) { _, open in
+            guard open else { return }
+            navigationPath.removeAll()
+            showsAlertsOverview = false
+            showsLicense = true
+            licenses.pendingOpenLicensePage = false
+        }
         .onChange(of: colorScheme) {
             updateWindowStyle()
         }
@@ -735,7 +742,7 @@ struct SettingsRootView: View {
 
     private var currentSubtitle: String {
         if showsLicense {
-            return localized("settings.license.subtitle", fallback: "Activate NotchFlow Pro on this Mac.")
+            return localized("settings.license.subtitle", fallback: "Activate Flowy Pro on this Mac.")
         }
         if showsAlertsOverview && navigationPath.isEmpty {
             return localized("settings.overview.alerts.subtitle", fallback: "Every alert the notch can show, in one place.")

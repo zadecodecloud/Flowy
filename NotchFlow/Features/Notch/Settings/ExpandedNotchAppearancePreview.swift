@@ -45,7 +45,7 @@ struct ExpandedNotchAppearancePreview: View {
                 cover.frame(width: 48, height: 48)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: "Blue Hour").font(.system(size: 16, weight: .semibold))
-                    Text(verbatim: "NotchFlow Sessions").font(.system(size: 12)).foregroundStyle(.white.opacity(0.68))
+                    Text(verbatim: "Flowy Sessions").font(.system(size: 12)).foregroundStyle(.white.opacity(0.68))
                 }
                 .lineLimit(1)
                 Spacer(minLength: 0)

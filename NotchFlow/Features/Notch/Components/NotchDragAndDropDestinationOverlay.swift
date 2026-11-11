@@ -7,7 +7,7 @@ struct NotchDragAndDropDestinationOverlay: View {
         guard settingsViewModel.isLiveActivityEnabled(.drop) else { return nil }
         return .available(preferred: settingsViewModel.mediaAndFiles.dragAndDropActivityMode,
                           airDrop: settingsViewModel.mediaAndFiles.isAirDropLiveActivityEnabled,
-                          tray: settingsViewModel.mediaAndFiles.isTrayLiveActivityEnabled && license.hasPro,
+                          tray: settingsViewModel.mediaAndFiles.isTrayLiveActivityEnabled && license.allows(.fileTray),
                           showingTray: isShowingTrayPage)
     }
     @ObservedObject var airDropViewModel: AirDropNotchViewModel

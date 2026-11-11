@@ -4,6 +4,13 @@ struct PermissionsSettingsView: View {
     @ObservedObject var permissionController: SettingsPermissionController
     @ObservedObject var applicationSettings: ApplicationSettingsStore
     @State private var imageAppear = false
+    @State private var primer: PrimerRequest?
+
+    private struct PrimerRequest: Identifiable {
+        let kind: Kind
+        let usesSystemSettings: Bool
+        var id: String { kind.rawValue }
+    }
 
     private func localized(_ key: String, fallback: String) -> String {
         applicationSettings.appLanguage.locale.nf(key, fallback: fallback)
@@ -18,6 +25,16 @@ struct PermissionsSettingsView: View {
                 imageAppear = true
             }
             permissionController.refresh()
+        }
+        .sheet(item: $primer) { request in
+            PermissionPrimerSheet(kind: request.kind,
+                                  locale: applicationSettings.appLanguage.locale,
+                                  usesSystemSettings: request.usesSystemSettings,
+                                  onContinue: {
+                                      primer = nil
+                                      permissionController.performAction(for: request.kind)
+                                  },
+                                  onCancel: { primer = nil })
         }
     }
 
@@ -85,7 +102,9 @@ struct PermissionsSettingsView: View {
                 let isOpenPrivacySettings = actionTitleKey == "settings.permissions.action.openPrivacySettings"
 
                 Button {
-                    permissionController.performAction(for: item.kind)
+                    // Explain first; macOS's own prompt (or System Settings) comes after "Continue".
+                    primer = PrimerRequest(kind: item.kind,
+                                           usesSystemSettings: isOpenPrivacySettings || item.kind == .fullDiskAccess)
                 } label: {
                     if isOpenPrivacySettings {
                         Image(systemName: "gearshape")

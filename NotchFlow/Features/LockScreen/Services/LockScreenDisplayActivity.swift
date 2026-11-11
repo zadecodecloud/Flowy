@@ -16,7 +16,7 @@ final class LockScreenDisplayActivity {
         guard assertionID == nil else { return }
         var id = IOPMAssertionID(0)
         let result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
-            IOPMAssertionLevel(kIOPMAssertionLevelOn), "NotchFlow lock screen player is visible" as CFString, &id)
+            IOPMAssertionLevel(kIOPMAssertionLevelOn), "Flowy lock screen player is visible" as CFString, &id)
         if result == kIOReturnSuccess {
             assertionID = id
         } else {

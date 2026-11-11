@@ -3,7 +3,7 @@ internal import AppKit
 /// Menu bar glyph: the NotchFlow capsule, drawn as a vector so it stays sharp at any size.
 enum MenuBarIcon {
     /// ← Chỉnh kích thước icon trên thanh menu tại đây (pt).
-    static let size: CGFloat = 23
+    static let size: CGFloat = 20
 
     /// Capsule length / thickness and tilt — same proportions as the app icon.
     private static let aspect: CGFloat = 1.42
@@ -29,7 +29,7 @@ enum MenuBarIcon {
             return true
         }
         image.isTemplate = true
-        image.accessibilityDescription = "NotchFlow"
+        image.accessibilityDescription = "Flowy"
         return image
     }()
 }

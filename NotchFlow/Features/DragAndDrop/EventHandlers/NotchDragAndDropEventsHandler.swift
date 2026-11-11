@@ -21,7 +21,7 @@ final class NotchDragAndDropEventsHandler {
         airDropViewModel: AirDropNotchViewModel,
         fileTrayViewModel: FileTrayViewModel,
         settingsViewModel: SettingsViewModel,
-        hasProAccess: @escaping @MainActor () -> Bool = { LicenseStore.shared.hasPro }
+        hasProAccess: @escaping @MainActor () -> Bool = { LicenseStore.shared.allows(.fileTray) }
     ) {
         self.notchViewModel = notchViewModel
         self.airDropViewModel = airDropViewModel

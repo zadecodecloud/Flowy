@@ -8,7 +8,7 @@
         "en": {
           "stringUnit": {
             "state": "new",
-            "value": "NotchFlow"
+            "value": "Flowy"
           }
         }
       }
@@ -19,13 +19,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow"
+            "value": "Flowy"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow"
+            "value": "Flowy"
           }
         }
       }
@@ -70,13 +70,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow needs access to your calendar to display upcoming events in the notch."
+            "value": "Flowy needs access to your calendar to display upcoming events in the notch."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
+            "value": "Flowy cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
           }
         }
       }
@@ -87,13 +87,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow needs access to your calendar to display upcoming events in the notch."
+            "value": "Flowy needs access to your calendar to display upcoming events in the notch."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
+            "value": "Flowy cần quyền truy cập lịch để hiển thị các sự kiện sắp tới trên notch."
           }
         }
       }
@@ -104,13 +104,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow needs access to your camera to display a camera preview in the notch."
+            "value": "Flowy needs access to your camera to display a camera preview in the notch."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "NotchFlow cần quyền truy cập camera để hiển thị bản xem trước trên notch."
+            "value": "Flowy cần quyền truy cập camera để hiển thị bản xem trước trên notch."
           }
         }
       }

@@ -52,19 +52,19 @@ struct LockScreenSettingsView: View {
                 .v2Span(2)
 
                 V2Tile(title: t("Màn hình khóa", "Lock Screen"),
-                       hint: licenses.hasPro ? nil : t("Nhạc trên màn hình khóa cần NotchFlow Pro.", "Lock screen music requires NotchFlow Pro.")) {
+                       hint: licenses.allows(.lockScreenMusic) ? nil : t("Nhạc trên màn hình khóa cần Flowy Pro.", "Lock screen music requires Flowy Pro.")) {
                     V2ToggleList(items: [
                         .init(id: "lockActivity", label: t("Hoạt động khi khóa", "Lock activity"),
                               note: t("Biểu tượng khóa trên notch", "Lock icon on the notch"),
                               isOn: $settings.isLockScreenLiveActivityEnabled),
                         .init(id: "mediaPanel", label: t("Bảng nhạc", "Music panel"),
                               isOn: $settings.isLockScreenMediaPanelEnabled,
-                              isDisabled: !licenses.hasPro),
+                              isDisabled: !licenses.allows(.lockScreenMusic)),
                         .init(id: "lyrics", label: t("Lời bài hát", "Lyrics"),
                               isOn: $settings.isLockScreenLyricsEnabled),
                         .init(id: "keepAwake", label: t("Giữ màn hình sáng", "Keep display awake"),
                               isOn: $settings.keepDisplayAwake,
-                              isDisabled: !licenses.hasPro || !settings.isLockScreenMediaPanelEnabled)
+                              isDisabled: !licenses.allows(.lockScreenMusic) || !settings.isLockScreenMediaPanelEnabled)
                     ])
                 }
             }

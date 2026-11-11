@@ -190,7 +190,7 @@ final class NotchEventCoordinator: ObservableObject {
         screenshotViewModel: ScreenshotViewModel? = nil,
         screenRecordingResultViewModel: ScreenRecordingResultViewModel? = nil,
         externalDrivesMonitor: ExternalDrivesMonitor,
-        hasProAccess: @escaping @MainActor () -> Bool = { LicenseStore.shared.hasPro }
+        hasProAccess: @escaping @MainActor () -> Bool = { LicenseStore.shared.allows(.fileTray) }
     ) {
         self.notchViewModel = notchViewModel
         self.settingsViewModel = settingsViewModel

@@ -5,7 +5,7 @@ struct FaceIDSettingsView: View {
     @ObservedObject var applicationSettings: ApplicationSettingsStore
     var notchViewModel: NotchViewModel?
     var body: some View {
-        Text("Face authentication and automatic login are unavailable in NotchFlow.")
+        Text("Face authentication and automatic login are unavailable in Flowy.")
             .padding()
     }
 }

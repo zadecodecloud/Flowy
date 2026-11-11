@@ -279,7 +279,7 @@ final class LockScreenPanelManager {
         snapshot: NowPlayingSnapshot?,
         artworkImage: NSImage?
     ) {
-        guard LicenseStore.shared.hasPro, LockScreenSettings.isMediaPanelEnabled() else {
+        guard LicenseStore.shared.allows(.lockScreenMusic), LockScreenSettings.isMediaPanelEnabled() else {
             hidePanel(animated: true, releaseResources: true)
             return
         }
@@ -417,7 +417,7 @@ final class LockScreenPanelManager {
                 isShowingLockPresentation: self.lockScreenManager.isShowingLockPresentation,
                 liveSnapshot: self.nowPlayingViewModel.snapshot
             ) != nil &&
-            LockScreenSettings.isMediaPanelEnabled() && LicenseStore.shared.hasPro
+            LockScreenSettings.isMediaPanelEnabled() && LicenseStore.shared.allows(.lockScreenMusic)
             
             guard !shouldRemainVisible else { return }
             
@@ -464,7 +464,7 @@ final class LockScreenPanelManager {
             for delay in [0.15, 0.35, 0.75, 1.25] {
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }
                 guard let self, self.lockScreenManager.isShowingLockPresentation,
-                      LicenseStore.shared.hasPro, LockScreenSettings.isMediaPanelEnabled() else { return }
+                      LicenseStore.shared.allows(.lockScreenMusic), LockScreenSettings.isMediaPanelEnabled() else { return }
                 self.hasDelegatedWindow = false
                 self.syncCurrentPresentation()
             }

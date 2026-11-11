@@ -22,6 +22,14 @@ final class CalendarViewModel: ObservableObject {
     
     func requestAccess() {
         guard !AppEnvironment.isRunningTests else { return }
+        guard EKEventStore.authorizationStatus(for: .event) == .notDetermined else { performRequest(); return }
+        // Explain the calendar first; macOS asks only after "Continue".
+        Task { @MainActor in
+            PermissionPrimerPresenter.shared.explainThenRequest(.calendar, request: { [weak self] in self?.performRequest() })
+        }
+    }
+
+    private func performRequest() {
         if #available(macOS 14.0, *) {
             eventStore.requestFullAccessToEvents { [weak self] granted, error in
                 DispatchQueue.main.async {

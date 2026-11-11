@@ -47,7 +47,7 @@ struct OnboardingNotchView: View {
                 illustration
                     .frame(width: Self.illustrationSize, height: Self.illustrationSize)
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(verbatim: tr("\(step.textKey).title", "Welcome to NotchFlow"))
+                    Text(verbatim: tr("\(step.textKey).title", "Welcome to Flowy"))
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.white)
                         .lineLimit(1)

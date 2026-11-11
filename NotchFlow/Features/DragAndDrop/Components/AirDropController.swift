@@ -72,7 +72,7 @@ final class NotchAirDropController: NSObject, ObservableObject {
     }
 
     func handleTrayDrop(_ pasteboard: NSPasteboard, mode: FileTrayUsageMode) -> Bool {
-        guard LicenseStore.shared.hasPro else { return false }
+        guard LicenseStore.shared.allows(.airDrop) else { return false }
         guard let fileURLs = pasteboard.fileURLsForAirDrop(), !fileURLs.isEmpty else {
             return false
         }

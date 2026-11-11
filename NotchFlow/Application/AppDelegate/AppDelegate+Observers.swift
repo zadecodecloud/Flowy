@@ -17,7 +17,7 @@ extension AppDelegate {
             LicenseStore.shared.$revision
         )
         .map { isNowPlayingEnabled, isLockScreenMediaPanelEnabled, _ in
-            isNowPlayingEnabled || (isLockScreenMediaPanelEnabled && LicenseStore.shared.hasPro)
+            isNowPlayingEnabled || (isLockScreenMediaPanelEnabled && LicenseStore.shared.allows(.lockScreenMusic))
         }
         .removeDuplicates()
         .sink { [weak self] shouldMonitorNowPlaying in
@@ -130,6 +130,13 @@ extension AppDelegate {
                 interceptVolume: isVolumeHUDEnabled,
                 interceptBrightness: isBrightnessHUDEnabled
             )
+            // Explain Accessibility before macOS asks (the HUD can't work without it).
+            guard let self, isVolumeHUDEnabled || isBrightnessHUDEnabled, !self.isRunningUITests else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                guard let self else { return }
+                PermissionPrimerPresenter.shared.presentAccessibilityIfNeeded(
+                    locale: self.settingsViewModel.application.appLanguage.locale)
+            }
         }
         .store(in: &cancellables)
     }

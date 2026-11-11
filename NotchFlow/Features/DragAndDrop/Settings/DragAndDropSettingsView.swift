@@ -53,9 +53,9 @@ struct DragAndDropSettingsView: View {
                 isOn: $mediaSettings.isTrayLiveActivityEnabled,
                 accessibilityIdentifier: "settings.activities.live.drop.tray"
             )
-            .disabled(!licenses.hasPro)
-            if !licenses.hasPro {
-                Text(appearanceSettings.appLanguage.locale.language.languageCode?.identifier == "vi" ? "File Tray cần NotchFlow Pro. Các tệp đã lưu vẫn được giữ lại." : "File Tray requires NotchFlow Pro. Existing files are retained.")
+            .disabled(!licenses.allows(.fileTray))
+            if !licenses.allows(.fileTray) {
+                Text(appearanceSettings.appLanguage.locale.language.languageCode?.identifier == "vi" ? "File Tray cần Flowy Pro. Các tệp đã lưu vẫn được giữ lại." : "File Tray requires Flowy Pro. Existing files are retained.")
                     .font(.caption).foregroundStyle(.secondary)
                 if let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
                     .appendingPathComponent("NotchFlow/FileTray", isDirectory: true),
@@ -90,7 +90,7 @@ struct DragAndDropSettingsView: View {
                 accessibilityIdentifier: "settings.activities.live.drop.trayUsage",
                 selection: $mediaSettings.fileTrayUsageMode
             )
-            .disabled(!licenses.hasPro)
+            .disabled(!licenses.allows(.fileTray))
             
             if mediaSettings.fileTrayUsageMode == .moveOriginals {
                 HStack {

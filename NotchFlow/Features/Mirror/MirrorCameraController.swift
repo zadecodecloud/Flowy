@@ -108,14 +108,21 @@ final class MirrorCameraController: ObservableObject {
             // The grant is global, not tied to this activation, so it is applied with
             // whatever generation is current when it lands. Dropping it on a stale
             // generation would leave a reopened mirror stuck in `.requesting`.
-            capture.requestAuthorization { [weak self] granted in
-                Task { @MainActor [weak self] in
-                    guard let self else { return }
-                    self.permissionPending = false
-                    guard self.wantsPreview else { return }
-                    if granted { self.startSession(generation: self.generation) } else { self.state = .denied }
+            // Explain the camera first; macOS asks only after "Continue".
+            PermissionPrimerPresenter.shared.explainThenRequest(.camera, request: { [weak self] in
+                self?.capture.requestAuthorization { [weak self] granted in
+                    Task { @MainActor [weak self] in
+                        guard let self else { return }
+                        self.permissionPending = false
+                        guard self.wantsPreview else { return }
+                        if granted { self.startSession(generation: self.generation) } else { self.state = .denied }
+                    }
                 }
-            }
+            }, onDecline: { [weak self] in
+                guard let self else { return }
+                self.permissionPending = false
+                if self.wantsPreview { self.state = .denied }
+            })
         case .denied, .restricted:
             state = .denied
         @unknown default:

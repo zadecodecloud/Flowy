@@ -4,6 +4,7 @@ import SwiftUI
 struct AboutAppSettingsView: View {
     @Environment(\.locale) private var locale
     @ObservedObject var applicationSettings: ApplicationSettingsStore
+    @ObservedObject private var updater = SparkleUpdater.shared
     let onRequestInternetAccess: () -> Bool
 
     private var version: String {
@@ -62,9 +63,44 @@ struct AboutAppSettingsView: View {
                 Text(locale.nf("notchflow.about.description", fallback: "A personal macOS notch utility."))
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
+                if SparkleUpdater.isConfigured {
+                    V2ToggleList(items: [
+                        .init(id: "autoUpdates", label: t("Tự động kiểm tra cập nhật", "Check for updates automatically"),
+                              isOn: $updater.automaticallyChecksForUpdates)
+                    ])
+                    Button(t("Kiểm tra cập nhật…", "Check for Updates…")) { updater.checkForUpdates() }
+                        .disabled(!updater.canCheckForUpdates)
+                        .accessibilityIdentifier("settings.about.checkForUpdates")
+                }
             }
+
+            legalNotice
         }
         .accessibilityIdentifier("settings.about.root")
+    }
+
+    /// GPL-3.0 "Appropriate Legal Notices" (section 5d), shown to every user.
+    /// The source link appears once `NotchFlowSourceURL` is set in Info.plist.
+    private static let sourceURL: URL? = (Bundle.main.object(forInfoDictionaryKey: "NotchFlowSourceURL") as? String)
+        .flatMap { $0.hasPrefix("https://") ? URL(string: $0) : nil }
+    private static let licenseURL = URL(string: "https://www.gnu.org/licenses/gpl-3.0.html")!
+
+    private var legalNotice: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(verbatim: t("Flowy là phần mềm tự do theo giấy phép GNU GPL v3, không kèm bất kỳ bảo hành nào. Có dùng mã từ DynamicNotch, Lottie, Sparkle và MediaRemoteAdapter.",
+                             "Flowy is free software under the GNU GPL v3 and comes with no warranty. It includes code from DynamicNotch, Lottie, Sparkle and MediaRemoteAdapter."))
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 12) {
+                Link(t("Giấy phép", "License"), destination: Self.licenseURL)
+                if let url = Self.sourceURL {
+                    Link(t("Mã nguồn", "Source code"), destination: url)
+                }
+            }
+        }
+        .font(.system(size: 11))
+        .foregroundStyle(.tertiary)
+        .padding(.horizontal, 4)
+        .accessibilityIdentifier("settings.about.legal")
     }
 
     private func labeled<C: View>(_ label: String, @ViewBuilder _ control: () -> C) -> some View {

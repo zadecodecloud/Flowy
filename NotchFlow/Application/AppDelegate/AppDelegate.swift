@@ -114,6 +114,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self?.notchEventCoordinator.handleSoftwareUpdateEvent(isAvailable ? .updateAvailable : .upToDate)
                 }
                 .store(in: &cancellables)
+            SparkleUpdater.shared.startAutomaticCheckOnLaunch()
         }
 
         lockScreenManager.startMonitoring()
@@ -130,6 +131,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         #endif
+    }
+
+    /// `notchflow://activate?key=…` from the store's checkout redirect: open License and activate.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard let key = urls.lazy.compactMap(LicenseStore.activationKey(from:)).first else { return }
+        let licenses = LicenseStore.shared
+        licenses.pendingOpenLicensePage = true
+        SettingsWindowController.shared.showWindow()
+        Task { try? await licenses.activateOnline(key) }
     }
 
     func applicationWillTerminate(_ notification: Notification) {

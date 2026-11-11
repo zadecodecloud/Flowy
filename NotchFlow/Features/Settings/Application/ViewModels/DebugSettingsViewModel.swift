@@ -1001,7 +1001,7 @@ final class DebugSettingsViewModel: ObservableObject {
         let reportURL = directory.appendingPathComponent("Debug Report.txt")
         let imageURL = directory.appendingPathComponent("Debug Image.png")
 
-        try Data("NotchFlow debug tray preview".utf8).write(to: reportURL, options: .atomic)
+        try Data("Flowy debug tray preview".utf8).write(to: reportURL, options: .atomic)
         try debugPNGData().write(to: imageURL, options: .atomic)
         fileTrayPreviewViewModel.add([reportURL, imageURL])
     }

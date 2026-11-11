@@ -2,17 +2,46 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDisplayName</key>
+	<string>Flowy</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>app.notchflow.mac</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>notchflow</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>Flowy listens to the sound your Mac plays so the music bars in the notch move with the beat. Nothing is recorded or saved.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Flowy needs access to your calendar to display upcoming events in the notch.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Flowy needs access to your calendar to display upcoming events in the notch.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Flowy needs access to your camera to display a camera preview in the notch.</string>
+	<key>NotchFlowCertificateKeys</key>
+	<dict/>
+	<key>NotchFlowCheckoutURL</key>
+	<string>https://flowdy.lemonsqueezy.com/checkout/buy/dafdf3bb-75cb-46fd-9f70-fbd451c7194f</string>
+	<key>NotchFlowLemonProductID</key>
+	<string>1517617</string>
+	<key>NotchFlowLemonStoreID</key>
+	<string>520808</string>
+	<key>NotchFlowLicenseAPIURL</key>
+	<string></string>
 	<key>NotchFlowLicensePublicKey</key>
 	<string>$(NOTCHFLOW_LICENSE_PUBLIC_KEY)</string>
-	<key>CFBundleDisplayName</key>
-	<string>NotchFlow</string>
-	<key>NSCameraUsageDescription</key>
-	<string>NotchFlow needs access to your camera to display a camera preview in the notch.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>NotchFlow needs access to your calendar to display upcoming events in the notch.</string>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>NotchFlow needs access to your calendar to display upcoming events in the notch.</string>
-	<key>NSAudioCaptureUsageDescription</key>
-	<string>NotchFlow listens to the sound your Mac plays so the music bars in the notch move with the beat. Nothing is recorded or saved.</string>
+	<key>NotchFlowSourceURL</key>
+	<string></string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string></string>
+	<key>SUPublicEDKey</key>
+	<string>HYVsn3Vu/qWRd17YiLVCHLcjW2zlofGRA6sUMVVcKNA=</string>
 </dict>
 </plist>

@@ -69,7 +69,7 @@ final class SystemAudioSpectrum {
         tapID = tap
 
         var aggregateDescription: [String: Any] = [
-            kAudioAggregateDeviceNameKey: "NotchFlow Music Bars",
+            kAudioAggregateDeviceNameKey: "Flowy Music Bars",
             kAudioAggregateDeviceUIDKey: UUID().uuidString,
             kAudioAggregateDeviceIsPrivateKey: true,
             kAudioAggregateDeviceIsStackedKey: false,

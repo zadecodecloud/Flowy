@@ -190,9 +190,6 @@
         }
       }
     },
-    "Activate" : {
-
-    },
     "Address: %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -451,9 +448,6 @@
         }
       }
     },
-    "Chưa cấu hình kích hoạt key." : {
-
-    },
     "Combined Targets" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -674,9 +668,6 @@
           }
         }
       }
-    },
-    "Enter Pro or developer key" : {
-
     },
     "Face authentication and automatic login are unavailable in NotchFlow." : {
 
@@ -1316,12 +1307,6 @@
         }
       }
     },
-    "Gỡ key developer" : {
-
-    },
-    "Gỡ key Pro" : {
-
-    },
     "Hide active drag targets with the drag-ended event." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1543,9 +1528,6 @@
         }
       }
     },
-    "Key activation is not configured." : {
-
-    },
     "Keyboard HUD" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1562,9 +1544,6 @@
           }
         }
       }
-    },
-    "Kích hoạt" : {
-
     },
     "Lock Screen" : {
       "extractionState" : "manual",
@@ -1918,13 +1897,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accessibility powers the HUD, the camera powers Mirror, and Calendar shows your next event. NotchFlow asks only when you first use each one."
+            "value" : "Accessibility powers the HUD, the camera powers Mirror, and Calendar shows your next event. Flowy asks only when you first use each one."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trợ năng dùng cho HUD, camera dùng cho Gương, và Lịch hiện sự kiện tiếp theo. NotchFlow chỉ hỏi khi bạn dùng từng tính năng lần đầu."
+            "value" : "Trợ năng dùng cho HUD, camera dùng cho Gương, và Lịch hiện sự kiện tiếp theo. Flowy chỉ hỏi khi bạn dùng từng tính năng lần đầu."
           }
         }
       }
@@ -2020,19 +1999,16 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to NotchFlow"
+            "value" : "Welcome to Flowy"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chào mừng đến với NotchFlow"
+            "value" : "Chào mừng đến với Flowy"
           }
         }
       }
-    },
-    "Nhập key Pro hoặc developer" : {
-
     },
     "No Internet Connection" : {
       "extractionState" : "manual",
@@ -3418,25 +3394,19 @@
         }
       }
     },
-    "NotchFlow Free" : {
-
-    },
-    "NotchFlow Pro" : {
-
-    },
     "notchflow.about.credit" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Based on NotchFlow, licensed under GPL-3.0."
+            "value" : "Based on Flowy, licensed under GPL-3.0."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Phát triển dựa trên NotchFlow, theo giấy phép GPL-3.0."
+            "value" : "Phát triển dựa trên Flowy, theo giấy phép GPL-3.0."
           }
         }
       }
@@ -4614,13 +4584,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welcome to NotchFlow"
+            "value" : "Welcome to Flowy"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chào mừng đến với NotchFlow"
+            "value" : "Chào mừng đến với Flowy"
           }
         }
       }
@@ -4838,12 +4808,6 @@
         }
       }
     },
-    "Pro bao gồm File Tray và nhạc trên màn hình khóa." : {
-
-    },
-    "Pro includes File Tray and lock screen music." : {
-
-    },
     "Ready" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4877,12 +4841,6 @@
           }
         }
       }
-    },
-    "Remove developer key" : {
-
-    },
-    "Remove Pro key" : {
-
     },
     "Reset All Previews" : {
       "extractionState" : "manual",
@@ -5066,7 +5024,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NotchFlow là một ứng dụng macOS mã nguồn mở giúp biến notch trên MacBook của bạn thành một không gian động và tương tác."
+            "value" : "Flowy là một ứng dụng macOS mã nguồn mở giúp biến notch trên MacBook của bạn thành một không gian động và tương tác."
           }
         }
       }
@@ -5213,13 +5171,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open the NotchFlow website"
+            "value" : "Open the Flowy website"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mở trang web NotchFlow"
+            "value" : "Mở trang web Flowy"
           }
         }
       }
@@ -11061,13 +11019,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activate NotchFlow Pro on this Mac."
+            "value" : "Activate Flowy Pro on this Mac."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kích hoạt NotchFlow Pro trên máy này."
+            "value" : "Kích hoạt Flowy Pro trên máy này."
           }
         }
       }
@@ -15668,13 +15626,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NotchFlow is a free, open-source project. If you like the app, support its development! Donations motivate to develop the project further."
+            "value" : "Flowy is a free, open-source project. If you like the app, support its development! Donations motivate to develop the project further."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NotchFlow là một dự án nguồn mở miễn phí. Nếu bạn thích ứng dụng, hãy ủng hộ sự phát triển của nó! Đóng góp của bạn thúc đẩy việc tạo ra các tính năng mới."
+            "value" : "Flowy là một dự án nguồn mở miễn phí. Nếu bạn thích ứng dụng, hãy ủng hộ sự phát triển của nó! Đóng góp của bạn thúc đẩy việc tạo ra các tính năng mới."
           }
         }
       }
@@ -15719,13 +15677,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Support NotchFlow"
+            "value" : "Support Flowy"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hỗ trợ NotchFlow"
+            "value" : "Hỗ trợ Flowy"
           }
         }
       }
