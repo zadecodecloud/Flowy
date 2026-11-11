@@ -4,7 +4,7 @@
 #   scripts/release-dmg.sh                 # signs with the "Apple Development" identity (stable permissions)
 #   SIGN_IDENTITY=- scripts/release-dmg.sh # ad-hoc signature instead
 #
-#   UPDATE_DOWNLOAD_BASE=https://github.com/OWNER/REPO/releases/download scripts/release-dmg.sh
+#   UPDATE_DOWNLOAD_BASE=… scripts/release-dmg.sh   (defaults to the zadeoncloud/flowy GitHub releases)
 #       also adds the release to build/updates/appcast.xml, signed with the Sparkle key in your Keychain.
 #
 # Output: build/release/Flowy-<version>.dmg and a .sha256 file next to it.
@@ -12,6 +12,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+UPDATE_DOWNLOAD_BASE="${UPDATE_DOWNLOAD_BASE:-https://github.com/zadeoncloud/flowy/releases/download}"
 SIGN_IDENTITY="${SIGN_IDENTITY:-Apple Development}"
 TEAM_ID="${TEAM_ID:-WP4578MNNL}"
 DERIVED="$ROOT/build/ReleaseDerivedData"
@@ -69,8 +70,14 @@ if [[ -n "${UPDATE_DOWNLOAD_BASE:-}" ]]; then
     mkdir -p "$UPDATES"
     find "$UPDATES" -name '*.dmg' -delete
     cp "$DMG" "$UPDATES/"
-    "$SPARKLE_BIN/generate_appcast" --download-url-prefix "${UPDATE_DOWNLOAD_BASE%/}/v$VERSION/" "$UPDATES"
+    # Signing key: Keychain by default, or the backup file (SPARKLE_KEY_FILE, or ~/Documents/NotchFlow Keys/…).
+    KEY_ARGS=()
+    KEY_FILE="${SPARKLE_KEY_FILE:-$HOME/Documents/NotchFlow Keys/notchflow-sparkle-private.key}"
+    [[ -f "$KEY_FILE" ]] && KEY_ARGS=(--ed-key-file "$KEY_FILE")
+    "$SPARKLE_BIN/generate_appcast" "${KEY_ARGS[@]}" --download-url-prefix "${UPDATE_DOWNLOAD_BASE%/}/v$VERSION/" "$UPDATES"
     grep -q "sparkle:edSignature" "$UPDATES/appcast.xml" || fail "appcast has no EdDSA signature."
+    cp "$UPDATES/appcast.xml" "$ROOT/appcast.xml"
+    echo "Appcast: $ROOT/appcast.xml (commit it; SUFeedURL reads it from the main branch)"
     echo "Appcast: $UPDATES/appcast.xml (upload the .dmg to release tag v$VERSION, then publish appcast.xml at SUFeedURL)"
 fi
 

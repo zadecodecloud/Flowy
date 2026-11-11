@@ -9,7 +9,7 @@
 
 **Music, a smarter HUD, a file tray and your devices — living in the notch.**
 
-[![Download](https://img.shields.io/github/v/release/OWNER/flowy?label=Download&style=for-the-badge&color=7d5cff)](https://github.com/OWNER/flowy/releases/latest)
+[![Download](https://img.shields.io/github/v/release/zadeoncloud/flowy?label=Download&style=for-the-badge&color=7d5cff)](https://github.com/zadeoncloud/flowy/releases/latest)
 &nbsp;
 [![Get Pro](https://img.shields.io/badge/Flowy_Pro-%E2%82%AC6.99_lifetime-30d158?style=for-the-badge)](https://flowdy.lemonsqueezy.com/checkout/buy/dafdf3bb-75cb-46fd-9f70-fbd451c7194f)
 
@@ -65,7 +65,7 @@
 
 ## Install
 
-1. Download **`Flowy-<version>.dmg`** from [Releases](https://github.com/OWNER/flowy/releases/latest).
+1. Download **`Flowy-<version>.dmg`** from [Releases](https://github.com/zadeoncloud/flowy/releases/latest).
 2. Drag **Flowy** to **Applications** and open it.
 3. The first time, macOS asks you to confirm an app from the internet: open **System Settings › Privacy & Security** and click **Open Anyway**. You only do this once — updates install themselves.
 
@@ -107,7 +107,7 @@ Only the ones for the features you turn on: Accessibility for the HUD, Bluetooth
 ## Build from source
 
 ```bash
-git clone https://github.com/OWNER/flowy.git
+git clone https://github.com/zadeoncloud/flowy.git
 cd flowy
 open NotchFlow.xcodeproj   # scheme: NotchFlow
 ```
