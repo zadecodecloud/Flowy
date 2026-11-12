@@ -44,13 +44,7 @@
     <td width="50%"><img src="assets/github/hud.svg" alt="Volume HUD in the notch"></td>
   </tr>
   <tr>
-    <td>
-
-<a href="assets/github/file-tray.mp4"><img src="assets/github/file-tray.gif" alt="File Tray demo" width="560"></a>
-
-<b>Drop files on the notch</b><br>
-Keep files handy and AirDrop them in one move. (Pro)
-</td>
+    <td width="50%"><img src="assets/github/file-tray.gif" alt="File Tray demo" width="560"><br><b>Drop files on the notch</b><br>Keep files handy and AirDrop them in one move. (Pro)</td>
     <td><img src="assets/github/lockscreen.svg" alt="Music on the lock screen"></td>
   </tr>
   <tr>
