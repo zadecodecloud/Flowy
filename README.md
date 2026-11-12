@@ -41,7 +41,7 @@
 <table>
   <tr>
     <td width="50%"><img src="assets/github/music.svg" alt="Music player in the notch"></td>
-    <td width="50%"><img src="assets/github/hud.svg" alt="Volume HUD in the notch"></td>
+    <td width="50%"><img src="assets/github/hud-demo.gif" alt="Volume HUD demo in the notch" width="560"><br><b>A HUD that fits the notch</b><br>Volume and brightness replace the macOS overlay.</td>
   </tr>
   <tr>
     <td width="50%"><img src="assets/github/file-tray.gif" alt="File Tray demo" width="560"><br><b>Drop files on the notch</b><br>Keep files handy and AirDrop them in one move. (Pro)</td>
