@@ -44,7 +44,13 @@
     <td width="50%"><img src="assets/github/hud.svg" alt="Volume HUD in the notch"></td>
   </tr>
   <tr>
-    <td><img src="assets/github/tray.svg" alt="File tray in the notch"></td>
+    <td>
+
+https://github.com/user-attachments/assets/584e51c0-686f-4dd2-a564-7708f296f864
+
+<b>Drop files on the notch</b><br>
+Keep files handy and AirDrop them in one move. (Pro)
+</td>
     <td><img src="assets/github/lockscreen.svg" alt="Music on the lock screen"></td>
   </tr>
   <tr>
