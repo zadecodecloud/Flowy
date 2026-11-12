@@ -46,7 +46,7 @@
   <tr>
     <td>
 
-<video src="https://github.com/zadecodecloud/Flowy/raw/refs/heads/main/assets/github/file-tray.mp4" controls width="100%" aria-label="File tray in the notch"></video>
+<a href="assets/github/file-tray.mp4"><img src="assets/github/file-tray.gif" alt="File Tray demo" width="560"></a>
 
 <b>Drop files on the notch</b><br>
 Keep files handy and AirDrop them in one move. (Pro)
